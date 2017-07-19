@@ -37,6 +37,8 @@ Output:
       
 Converting a distance object to a different unit of measurement:
 
+    var 
+      some_distance = new_distance(1.0, Kilometres)
     some_distance.to(Parsecs)
     echo some_distance
     
@@ -46,6 +48,8 @@ Output:
     
 Getting the length of a distance object as a float without mutating the object:
 
+    var 
+      some_distance = new_distance(1.0, Kilometres)
     echo some_distance.size_as(Picometres)
     
 Output:
@@ -54,7 +58,9 @@ Output:
     
 Creating a copy of a distance object in a different unit of measurement:
 
-    var a_new_distance = some_distance.copy_as(Centimetres)
+    var 
+      some_distance = new_distance(1.0, Kilometres)
+      a_new_distance = some_distance.copy_as(Centimetres)
     echo a_new_distance
     
 Output:
@@ -63,7 +69,9 @@ Output:
     
 Arithmetic with distance objects:
 
-    some_distance.to(Millimetres)
+    var 
+      some_distance = new_distance(1.0, Kilometres)
+      other_distance = Distance(size: 100.0, units: Metres)
     echo some_distance + other_distance
     echo some_distance - other_distance
     echo some_distance * other_distance
@@ -71,9 +79,9 @@ Arithmetic with distance objects:
     
 Output:
 
-    1100000.0 Millimetres
-    900000.0 Millimetres
-    100000000000.0 Millimetres
-    10.0 Millimetres
+    1.1 Kilometres
+    0.9 Kilometres
+    0.1 Kilometres
+    10.0 Kilometres
     
   
