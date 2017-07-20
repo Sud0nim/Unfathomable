@@ -271,8 +271,8 @@ proc `echo` *(a: Area) =
   echo "$1 $2" % [$a.size, $a.units]
 
 var 
-    some_distance = new_distance(1.0, Kilometres)
-    other_distance = Distance(size: 100.0, units: Metres)
+  some_distance = new_distance(1.0, Kilometres)
+  other_distance = Distance(size: 100.0, units: Metres)
 
 assert((new_distance(1.0, HubbleLengths) * new_distance(1.0, HubbleLengths)).size == new_area(1.0, SquareHubbleLengths).size)
 assert(some_distance + other_distance == new_distance(1.1, Kilometres))
