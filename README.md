@@ -76,6 +76,9 @@ Arithmetic with distance objects:
     echo some_distance - other_distance
     echo some_distance * other_distance
     echo some_distance / other_distance
+    echo 2 * some_distance
+    echo some_distance * 2
+    echo some_distance / 2
     
 Output:
 
@@ -83,5 +86,8 @@ Output:
     0.9 Kilometres
     0.1 Kilometres
     10.0 Kilometres
+    2.0 Kilometres
+    2.0 Kilometres
+    0.5 Kilometres
     
   
