@@ -235,6 +235,14 @@ proc `*` *(a, b: Distance): Distance =
     new_distance.size = a.size * b.sizeAs(a.units)
   new_distance
 
+proc `*` *(a: float; b: Distance): Distance =
+  let new_size = a * b.size
+  Distance(size: new_size, units: b.units)
+
+proc `*` *(a: Distance; b: float): Distance =
+  let new_size = a.size * b
+  Distance(size: new_size, units: a.units)
+
 proc `*` *(a, b: Area): Area =
   var new_area = Area(size: 0.0,  units: a.units)
   if a.units == b.units:
@@ -250,6 +258,10 @@ proc `/` *(a, b: Distance): Distance =
   else:
     new_distance.size = a.size / b.sizeAs(a.units)
   new_distance
+
+proc `/` *(a: Distance; b: float): Distance =
+  let new_size = a.size / b
+  Distance(size: new_size, units: a.units)
 
 proc `/` *(a, b: Area): Area =
   var new_area = Area(size: 0.0,  units: a.units)
