@@ -138,4 +138,12 @@ Arithmetic with distance objects:
     
 Output:
 
-
+    1.0001 SquareKilometres
+    0.9999 SquareKilometres
+    0.0001 SquareKilometres
+    10000.0 SquareKilometres
+    2.0 SquareKilometres
+    2.0 SquareKilometres
+    0.5 SquareKilometres
+    
+    
