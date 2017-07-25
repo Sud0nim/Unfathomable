@@ -68,7 +68,7 @@ let distance_to_area_mapping* = {
   HubbleLengths: SquareHubbleLengths,
   Zettametres: SquareZettametres,
   Yottametres: SquareYottametres
-}.to_table
+}.toTable
   
 let area_to_distance_mapping* = distance_to_area_mapping.reverse_table
 
@@ -114,7 +114,7 @@ let relative_lengths* = {
   HubbleLengths: 1.40398329956757145e20f64,
   Zettametres: 1e21f64,
   Yottametres: 1e24f64
-}.to_table
+}.toTable
 
 let relative_areas* = {
   PlanckAreas: 2.6e10-70f64,
@@ -159,7 +159,7 @@ let relative_areas* = {
   SquareHubbleLengths: 1.9711691054646450749005644508551e40f64,
   SquareZettametres: 1e42f64,
   SquareYottametres: 1e48f64
-}.to_table
+}.toTable
 
 type
   Distance* = object
