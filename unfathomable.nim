@@ -1,7 +1,7 @@
 
 import tables, strutils
 
-proc reverse_table[A, B](pairs: Table[A, B]): Table[B, A] =
+proc reverseTable[A, B](pairs: Table[A, B]): Table[B, A] =
   result = initTable[B, A](rightSize(pairs.len))
   for key, val in pairs: result[val] = key
 
@@ -169,38 +169,38 @@ type
     size*: float64
     units*: AreaMeasure
 
-proc new_distance*(size: float64, unit_type: LengthMeasure): Distance =
+proc newDistance*(size: float64, unit_type: LengthMeasure): Distance =
   Distance(size: size, units: unit_type)
 
-proc new_area*(size: float64, unit_type: AreaMeasure): Area =
+proc newArea*(size: float64, unit_type: AreaMeasure): Area =
   Area(size: size, units: unit_type)
 
-proc size_as*(measurement: Distance, units: LengthMeasure): float64 =
+proc sizeAs*(measurement: Distance, units: LengthMeasure): float64 =
   measurement.size * relative_lengths[measurement.units] /  relative_lengths[units]
 
-proc size_as*(area: Area, units: AreaMeasure): float64 =
+proc sizeAs*(area: Area, units: AreaMeasure): float64 =
   area.size * relative_areas[area.units] /  relative_areas[units]
 
 proc to*(measurement: var Distance, units: LengthMeasure) =
-  measurement.size = measurement.size_as(units)
+  measurement.size = measurement.sizeAs(units)
   measurement.units = units
 
 proc to*(area: var Area, units: AreaMeasure) =
-  area.size = area.size_as(units)
+  area.size = area.sizeAs(units)
   area.units = units
 
-proc copy_as*(measurement: Distance, units: LengthMeasure): Distance =
-  Distance(size: measurement.size_as(units), units: units)
+proc copyAs*(measurement: Distance, units: LengthMeasure): Distance =
+  Distance(size: measurement.sizeAs(units), units: units)
 
-proc copy_as*(area: Area, units: AreaMeasure): Area =
-  Area(size: area.size_as(units), units: units)
+proc copyAs*(area: Area, units: AreaMeasure): Area =
+  Area(size: area.sizeAs(units), units: units)
 
 proc `+` *(a, b: Distance): Distance =
   var new_distance = Distance(size: 0.0, units: a.units)
   if a.units == b.units:
     new_distance.size = a.size + b.size
   else:
-    new_distance.size = a.size + b.size_as(a.units)
+    new_distance.size = a.size + b.sizeAs(a.units)
   new_distance
 
 proc `+` *(a, b: Area): Area =
@@ -208,7 +208,7 @@ proc `+` *(a, b: Area): Area =
   if a.units == b.units:
     new_area.size = a.size + b.size
   else:
-    new_area.size = a.size + b.size_as(a.units)
+    new_area.size = a.size + b.sizeAs(a.units)
   new_area
 
 proc `-` *(a, b: Distance): Distance =
@@ -216,7 +216,7 @@ proc `-` *(a, b: Distance): Distance =
   if a.units == b.units:
     new_distance.size = a.size - b.size
   else:
-    new_distance.size = a.size - b.size_as(a.units)
+    new_distance.size = a.size - b.sizeAs(a.units)
   new_distance
 
 proc `-` *(a, b: Area): Area =
@@ -224,7 +224,7 @@ proc `-` *(a, b: Area): Area =
   if a.units == b.units:
     new_area.size = a.size - b.size
   else:
-    new_area.size = a.size - b.size_as(a.units)
+    new_area.size = a.size - b.sizeAs(a.units)
   new_area
 
 proc `*` *(a, b: Distance): Distance =
@@ -232,7 +232,7 @@ proc `*` *(a, b: Distance): Distance =
   if a.units == b.units:
     new_distance.size = a.size * b.size
   else:
-    new_distance.size = a.size * b.size_as(a.units)
+    new_distance.size = a.size * b.sizeAs(a.units)
   new_distance
 
 proc `*` *(a, b: Area): Area =
@@ -240,7 +240,7 @@ proc `*` *(a, b: Area): Area =
   if a.units == b.units:
     new_area.size = a.size * b.size
   else:
-    new_area.size = a.size * b.size_as(a.units)
+    new_area.size = a.size * b.sizeAs(a.units)
   new_area
 
 proc `/` *(a, b: Distance): Distance =
@@ -248,7 +248,7 @@ proc `/` *(a, b: Distance): Distance =
   if a.units == b.units:
     new_distance.size = a.size / b.size
   else:
-    new_distance.size = a.size / b.size_as(a.units)
+    new_distance.size = a.size / b.sizeAs(a.units)
   new_distance
 
 proc `/` *(a, b: Area): Area =
@@ -256,10 +256,10 @@ proc `/` *(a, b: Area): Area =
   if a.units == b.units:
     new_area.size = a.size / b.size
   else:
-    new_area.size = a.size / b.size_as(a.units)
+    new_area.size = a.size / b.sizeAs(a.units)
   new_area
 
-proc new_area*(length, width: Distance): Area =
+proc newArea*(length, width: Distance): Area =
   let 
     size = length * width
   Area(size: size.size, units: distance_to_area_mapping[size.units])
@@ -271,9 +271,9 @@ proc `echo` *(a: Area) =
   echo "$1 $2" % [$a.size, $a.units]
 
 var 
-  some_distance = new_distance(1.0, Kilometres)
+  some_distance = newDistance(1.0, Kilometres)
   other_distance = Distance(size: 100.0, units: Metres)
 
-assert((new_distance(1.0, HubbleLengths) * new_distance(1.0, HubbleLengths)).size == new_area(1.0, SquareHubbleLengths).size)
-assert(some_distance + other_distance == new_distance(1.1, Kilometres))
+assert((newDistance(1.0, HubbleLengths) * newDistance(1.0, HubbleLengths)).size == newArea(1.0, SquareHubbleLengths).size)
+assert(some_distance + other_distance == newDistance(1.1, Kilometres))
 
