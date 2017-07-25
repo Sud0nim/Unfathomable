@@ -18,22 +18,6 @@ Output:
 
     1.0 Kilometres
     100.0 Metres
-    
-Creating an area object:
-    
-    let
-      someArea = newArea(5, SquareKilometres)
-      otherArea = Area(size: 10, units: SquareMetres)
-      thirdArea = newArea(someDistance, otherDistance)
-    echo someArea
-    echo otherArea
-    echo thirdArea
-    
-Output:
-
-    5.0 SquareKilometres
-    10.0 SquareMetres
-    0.1 SquareKilometres
       
 Converting a distance object to a different unit of measurement:
 
@@ -90,4 +74,68 @@ Output:
     2.0 Kilometres
     0.5 Kilometres
     
-  
+Creating an area object:
+    
+    let
+      someArea = newArea(5, SquareKilometres)
+      otherArea = Area(size: 10, units: SquareMetres)
+      thirdArea = newArea(someDistance, otherDistance)
+    echo someArea
+    echo otherArea
+    echo thirdArea
+    
+Output:
+
+    5.0 SquareKilometres
+    10.0 SquareMetres
+    0.1 SquareKilometres
+    
+      
+Converting an area object to a different unit of measurement:
+
+    var 
+      someArea = newArea(10000, SquareLeagues)
+    someArea.to(SquareMiles)
+    echo someArea
+    
+Output:
+
+    119186.4004348653 SquareMiles
+    
+Getting the size of an area object as a float without mutating the object:
+
+    let 
+      someArea = newArea(10000, SquareMetres)
+    echo someArea.sizeAs(SquareYards)
+    
+Output:
+
+    11959.9004630108
+    
+Creating a copy of an area object in a different unit of measurement:
+
+    let 
+      someArea = newArea(1.0, SquareKilometres)
+      aNewArea = someArea.copyAs(SquareCentimetres)
+    echo aNewArea
+    
+Output:
+
+    10000000000.0 SquareCentimetres
+    
+Arithmetic with distance objects:
+
+    let 
+      someArea = newArea(1.0, SquareKilometres)
+      otherArea = Area(size: 100.0, units: SquareMetres)
+    echo someArea + otherArea
+    echo someArea - otherArea
+    echo someArea * otherArea
+    echo someArea / otherArea
+    echo 2 * someArea
+    echo someArea * 2
+    echo someArea / 2
+    
+Output:
+
+
