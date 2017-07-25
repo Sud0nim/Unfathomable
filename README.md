@@ -123,7 +123,7 @@ Output:
 
     10000000000.0 SquareCentimetres
     
-Arithmetic with distance objects:
+Arithmetic with area objects:
 
     let 
       someArea = newArea(1.0, SquareKilometres)
