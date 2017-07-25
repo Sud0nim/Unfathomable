@@ -9,10 +9,10 @@ Note: While conversions and calculations should be correct - this library is onl
 Creating a distance object:
 
     var 
-      some_distance = newDistance(1.0, Kilometres)
-      other_distance = Distance(size: 100.0, units: Metres)
-    echo some_distance
-    echo other_distance
+      someDistance = newDistance(1.0, Kilometres)
+      otherDistance = Distance(size: 100.0, units: Metres)
+    echo someDistance
+    echo otherDistance
 
 Output:
 
@@ -22,12 +22,12 @@ Output:
 Creating an area object:
     
     var
-      some_area = newArea(5, SquareKilometres)
-      other_area = Area(size: 10, units: SquareMetres)
-      third_area = newArea(some_distance, other_distance)
-    echo some_area
-    echo other_area
-    echo third_area
+      someArea = newArea(5, SquareKilometres)
+      otherArea = Area(size: 10, units: SquareMetres)
+      thirdArea = newArea(someDistance, otherDistance)
+    echo someArea
+    echo otherArea
+    echo thirdArea
     
 Output:
 
@@ -38,9 +38,9 @@ Output:
 Converting a distance object to a different unit of measurement:
 
     var 
-      some_distance = newDistance(1.0, Kilometres)
-    some_distance.to(Parsecs)
-    echo some_distance
+      someDistance = newDistance(1.0, Kilometres)
+    someDistance.to(Parsecs)
+    echo someDistance
     
 Output:
 
@@ -49,8 +49,8 @@ Output:
 Getting the length of a distance object as a float without mutating the object:
 
     var 
-      some_distance = newDistance(1.0, Kilometres)
-    echo some_distance.sizeAs(Picometres)
+      someDistance = newDistance(1.0, Kilometres)
+    echo someDistance.sizeAs(Picometres)
     
 Output:
 
@@ -59,9 +59,9 @@ Output:
 Creating a copy of a distance object in a different unit of measurement:
 
     var 
-      some_distance = newDistance(1.0, Kilometres)
-      a_new_distance = some_distance.copyAs(Centimetres)
-    echo a_new_distance
+      someDistance = newDistance(1.0, Kilometres)
+      aNewDistance = someDistance.copyAs(Centimetres)
+    echo aNewDistance
     
 Output:
 
@@ -70,15 +70,15 @@ Output:
 Arithmetic with distance objects:
 
     var 
-      some_distance = newDistance(1.0, Kilometres)
-      other_distance = Distance(size: 100.0, units: Metres)
-    echo some_distance + other_distance
-    echo some_distance - other_distance
-    echo some_distance * other_distance
-    echo some_distance / other_distance
-    echo 2 * some_distance
-    echo some_distance * 2
-    echo some_distance / 2
+      someDistance = newDistance(1.0, Kilometres)
+      otherDistance = Distance(size: 100.0, units: Metres)
+    echo someDistance + otherDistance
+    echo someDistance - otherDistance
+    echo someDistance * otherDistance
+    echo someDistance / otherDistance
+    echo 2 * someDistance
+    echo someDistance * 2
+    echo someDistance / 2
     
 Output:
 
