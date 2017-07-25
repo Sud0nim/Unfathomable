@@ -8,7 +8,7 @@ Note: While conversions and calculations should be correct - this library is onl
 
 Creating a distance object:
 
-    var 
+    let 
       someDistance = newDistance(1.0, Kilometres)
       otherDistance = Distance(size: 100.0, units: Metres)
     echo someDistance
@@ -21,7 +21,7 @@ Output:
     
 Creating an area object:
     
-    var
+    let
       someArea = newArea(5, SquareKilometres)
       otherArea = Area(size: 10, units: SquareMetres)
       thirdArea = newArea(someDistance, otherDistance)
@@ -48,7 +48,7 @@ Output:
     
 Getting the length of a distance object as a float without mutating the object:
 
-    var 
+    let 
       someDistance = newDistance(1.0, Kilometres)
     echo someDistance.sizeAs(Picometres)
     
@@ -58,7 +58,7 @@ Output:
     
 Creating a copy of a distance object in a different unit of measurement:
 
-    var 
+    let 
       someDistance = newDistance(1.0, Kilometres)
       aNewDistance = someDistance.copyAs(Centimetres)
     echo aNewDistance
@@ -69,7 +69,7 @@ Output:
     
 Arithmetic with distance objects:
 
-    var 
+    let 
       someDistance = newDistance(1.0, Kilometres)
       otherDistance = Distance(size: 100.0, units: Metres)
     echo someDistance + otherDistance
