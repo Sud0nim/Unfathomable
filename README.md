@@ -9,7 +9,7 @@ Note: While conversions and calculations should be correct - this library is onl
 Creating a distance object:
 
     var 
-      some_distance = new_distance(1.0, Kilometres)
+      some_distance = newDistance(1.0, Kilometres)
       other_distance = Distance(size: 100.0, units: Metres)
     echo some_distance
     echo other_distance
@@ -22,9 +22,9 @@ Output:
 Creating an area object:
     
     var
-      some_area = new_area(5, SquareKilometres)
+      some_area = newArea(5, SquareKilometres)
       other_area = Area(size: 10, units: SquareMetres)
-      third_area = new_area(some_distance, other_distance)
+      third_area = newArea(some_distance, other_distance)
     echo some_area
     echo other_area
     echo third_area
@@ -38,7 +38,7 @@ Output:
 Converting a distance object to a different unit of measurement:
 
     var 
-      some_distance = new_distance(1.0, Kilometres)
+      some_distance = newDistance(1.0, Kilometres)
     some_distance.to(Parsecs)
     echo some_distance
     
@@ -49,8 +49,8 @@ Output:
 Getting the length of a distance object as a float without mutating the object:
 
     var 
-      some_distance = new_distance(1.0, Kilometres)
-    echo some_distance.size_as(Picometres)
+      some_distance = newDistance(1.0, Kilometres)
+    echo some_distance.sizeAs(Picometres)
     
 Output:
 
@@ -59,8 +59,8 @@ Output:
 Creating a copy of a distance object in a different unit of measurement:
 
     var 
-      some_distance = new_distance(1.0, Kilometres)
-      a_new_distance = some_distance.copy_as(Centimetres)
+      some_distance = newDistance(1.0, Kilometres)
+      a_new_distance = some_distance.copyAs(Centimetres)
     echo a_new_distance
     
 Output:
@@ -70,7 +70,7 @@ Output:
 Arithmetic with distance objects:
 
     var 
-      some_distance = new_distance(1.0, Kilometres)
+      some_distance = newDistance(1.0, Kilometres)
       other_distance = Distance(size: 100.0, units: Metres)
     echo some_distance + other_distance
     echo some_distance - other_distance
