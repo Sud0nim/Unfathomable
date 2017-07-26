@@ -208,12 +208,10 @@ proc `+` *(a: Distance; b: float): Distance =
   Distance(size: a.size + b, units: a.units)
 
 proc `+` *(a, b: Area): Area =
-  var new_area = Area(size: 0.0,  units: a.units)
   if a.units == b.units:
-    new_area.size = a.size + b.size
+    Area(size: a.size + b.size,  units: a.units)
   else:
-    new_area.size = a.size + b.sizeAs(a.units)
-  new_area
+    Area(size: a.size + b.sizeAs(a.units),  units: a.units)
 
 proc `-` *(a, b: Distance): Distance =
   if a.units == b.units:
@@ -228,20 +226,16 @@ proc `-` *(a: Distance; b: float): Distance =
   Distance(size: a.size - b, units: a.units)
 
 proc `-` *(a, b: Area): Area =
-  var new_area = Area(size: 0.0,  units: a.units)
   if a.units == b.units:
-    new_area.size = a.size - b.size
+    Area(size: a.size - b.size,  units: a.units)
   else:
-    new_area.size = a.size - b.sizeAs(a.units)
-  new_area
+    Area(size: a.size - b.sizeAs(a.units),  units: a.units)
 
 proc `*` *(a, b: Distance): Distance =
-  var new_distance = Distance(size: 0.0, units: a.units)
   if a.units == b.units:
-    new_distance.size = a.size * b.size
+    Distance(size: a.size * b.size, units: a.units)
   else:
-    new_distance.size = a.size * b.sizeAs(a.units)
-  new_distance
+    Distance(size: a.size * b.sizeAs(a.units), units: a.units)
 
 proc `*` *(a: float; b: Distance): Distance =
   Distance(size: a * b.size, units: b.units)
@@ -250,12 +244,10 @@ proc `*` *(a: Distance; b: float): Distance =
   Distance(size: a.size * b, units: a.units)
 
 proc `*` *(a, b: Area): Area =
-  var new_area = Area(size: 0.0,  units: a.units)
   if a.units == b.units:
-    new_area.size = a.size * b.size
+    Area(size: a.size * b.size,  units: a.units)
   else:
-    new_area.size = a.size * b.sizeAs(a.units)
-  new_area
+    Area(size: a.size * b.sizeAs(a.units),  units: a.units)
 
 proc `*` *(a: Area; b: float): Area =
   Area(size: a.size * b, units: a.units)
@@ -264,23 +256,19 @@ proc `*` *(a: float; b: Area): Area =
   Area(size: b.size * a, units: b.units)
 
 proc `/` *(a, b: Distance): Distance =
-  var new_distance = Distance(size: 0.0, units: a.units)
   if a.units == b.units:
-    new_distance.size = a.size / b.size
+    Distance(size: a.size / b.size, units: a.units)
   else:
-    new_distance.size = a.size / b.sizeAs(a.units)
-  new_distance
+    Distance(size: a.size / b.size, units: a.units)
 
 proc `/` *(a: Distance; b: float): Distance =
   Distance(size: a.size / b, units: a.units)
 
 proc `/` *(a, b: Area): Area =
-  var new_area = Area(size: 0.0,  units: a.units)
   if a.units == b.units:
-    new_area.size = a.size / b.size
+    Area(size: a.size / b.size,  units: a.units)
   else:
-    new_area.size = a.size / b.sizeAs(a.units)
-  new_area
+    Area(size: a.size / b.sizeAs(a.units),  units: a.units)
 
 proc `/` *(a: Area; b: float): Area =
   Area(size: a.size / b, units: a.units)
