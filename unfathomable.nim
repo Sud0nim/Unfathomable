@@ -219,6 +219,30 @@ proc `<` *(a, b: Distance): bool =
   else:
     a.size < b.sizeAs(a.units)
 
+proc `==` *(a, b: Area): bool =
+  if a.units == b.units:
+    a.size == b.size
+  else:
+    a.size == b.sizeAs(a.units)
+
+proc `!=` *(a, b: Area): bool =
+  if a.units == b.units:
+    a.size != b.size
+  else:
+    a.size != b.sizeAs(a.units)
+
+proc `>` *(a, b: Area): bool =
+  if a.units == b.units:
+    a.size > b.size
+  else:
+    a.size > b.sizeAs(a.units)
+
+proc `<` *(a, b: Area): bool =
+  if a.units == b.units:
+    a.size < b.size
+  else:
+    a.size < b.sizeAs(a.units)
+
 proc `+` *(a, b: Distance): Distance =
   if a.units == b.units:
     Distance(size: a.size + b.size, units: a.units)
