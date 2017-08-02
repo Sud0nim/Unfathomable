@@ -194,6 +194,30 @@ proc copyAs*(measurement: Distance, units: LengthMeasure): Distance =
 
 proc copyAs*(area: Area, units: AreaMeasure): Area =
   Area(size: area.sizeAs(units), units: units)
+  
+proc `==` *(a, b: Distance): bool =
+  if a.units == b.units:
+    a.size == b.size
+  else:
+    a.size == b.sizeAs(a.units)
+
+proc `!=` *(a, b: Distance): bool =
+  if a.units == b.units:
+    a.size != b.size
+  else:
+    a.size != b.sizeAs(a.units)
+
+proc `>` *(a, b: Distance): bool =
+  if a.units == b.units:
+    a.size > b.size
+  else:
+    a.size > b.sizeAs(a.units)
+
+proc `<` *(a, b: Distance): bool =
+  if a.units == b.units:
+    a.size < b.size
+  else:
+    a.size < b.sizeAs(a.units)
 
 proc `+` *(a, b: Distance): Distance =
   if a.units == b.units:
@@ -280,14 +304,15 @@ proc newArea*(length, width: Distance): Area =
 
 proc `echo` *(a: Distance) =
   echo "$1 $2" % [$a.size, $a.units]
+  
+proc `$` *(a: Distance) =
+  echo "$1 $2" % [$a.size, $a.units]
 
 proc `echo` *(a: Area) =
   echo "$1 $2" % [$a.size, $a.units]
+  
+proc `$` *(a: Area) =
+  echo "$1 $2" % [$a.size, $a.units]
 
-var 
-  some_distance = newDistance(1.0, Kilometres)
-  other_distance = Distance(size: 100.0, units: Metres)
 
-assert((newDistance(1.0, HubbleLengths) * newDistance(1.0, HubbleLengths)).size == newArea(1.0, SquareHubbleLengths).size)
-assert(some_distance + other_distance == newDistance(1.1, Kilometres))
 
