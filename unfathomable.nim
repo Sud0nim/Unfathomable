@@ -14,8 +14,7 @@ type
   Distance* = object
     size*: float
     units*: LengthMeasure
-  Point* = object
-    latitude*, longitude*: float
+  Point* = tuple[latitude, longitude: float]
 
 const relative_lengths* = {
   PlanckLength: 1.62e-35,
@@ -65,7 +64,7 @@ proc newDistance*(size: float, unit_type: LengthMeasure): Distance =
   Distance(size: size, units: unit_type)
 
 proc newPoint*(latitude, longitude: float): Point =
-  Point(latitude: latitude, longitude: longitude)
+  (latitude: latitude, longitude: longitude)
 
 proc sizeAs*(measurement: Distance, units: LengthMeasure): float =
   measurement.size * relative_lengths[measurement.units] /  relative_lengths[units]
