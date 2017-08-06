@@ -84,3 +84,19 @@ Output:
     true
     true
 
+Find Haversine distance between two points:
+
+    var 
+      p1 = newPoint(40.7486, -73.9864)
+      p2 = newPoint(26.22, -50.0)
+    
+    echo getHaversineDistance(p1, p2, Kilometres)
+    echo p1 - p2
+    echo((p2 - p1).copyAs(Yards))
+    
+Output:
+    
+    2733.944610522819 Kilometres
+    2733944.610522819 Metres
+    2989878.18298646 Yards
+    
