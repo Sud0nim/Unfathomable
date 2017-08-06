@@ -1,6 +1,7 @@
 
 from tables import Table, toTable, `[]`
 from strutils import `%`
+from math import sin, cos, arctan2, degToRad, sqrt
 
 type
   LengthMeasure* = enum
@@ -76,6 +77,20 @@ proc to*(measurement: var Distance, units: LengthMeasure) =
 proc copyAs*(measurement: Distance, units: LengthMeasure): Distance =
   Distance(size: measurement.sizeAs(units), units: units)
 
+proc getHaversineDistance(pointA, pointB: Point, units: LengthMeasure = Metres): Distance =
+  if pointA == pointB:
+    Distance(size: 0.0, units: units)
+  else:
+    let 
+      a = sin((pointB.latitude - pointA.latitude).degToRad / 2) * 
+        sin((pointB.latitude - pointA.latitude).degToRad / 2) + 
+        cos(pointA.latitude.degToRad) * cos(pointB.latitude.degToRad) * 
+        sin((pointB.longitude - pointA.longitude).degToRad / 2) *
+        sin((pointB.longitude - pointA.longitude).degToRad / 2)
+      b = 6.371009e6 * 2 * arctan2(sqrt(a), sqrt(1 - a))
+    Distance(size: b * relative_lengths[Metres] / 
+      relative_lengths[units], units: units)
+
 proc `==` *(a, b: Distance): bool =
   if a.units == b.units:
     a.size == b.size
@@ -123,6 +138,9 @@ proc `-` *(a: float; b: Distance): Distance =
 
 proc `-` *(a: Distance; b: float): Distance =
   Distance(size: a.size - b, units: a.units)
+
+proc `-` *(a: Point; b: Point): Distance =
+  getHaversineDistance(a, b)
 
 proc `*` *(a, b: Distance): Distance =
   if a.units == b.units:
