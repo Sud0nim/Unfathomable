@@ -204,11 +204,11 @@ proc getVincentyDistance(pointA, pointB: Point, units: LengthMeasure): Distance 
       cos2σM = 0.0
     var
       C = flattening / 16 * cosSqα * (4 + flattening * (4 - 3 * cosSqα))
-      LambdaPrev = λ
+      previousλ = λ
       λ = λ + (1 - C) * flattening * sinα * (σ + C * sinσ *
                                            (cos2σM + C * cosσ *
                                             pow(-1 + 2 * cos2σM, 2)))
-    if abs(λ - LambdaPrev) < convergenceThreshold:
+    if abs(λ - previousλ) < convergenceThreshold:
         break 
     #else:
     #  return Distance(size: 0.0, units: units) # needs to be fixed
