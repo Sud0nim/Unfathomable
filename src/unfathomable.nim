@@ -1,7 +1,6 @@
 
-from tables import Table, toTable, `[]`
 from strutils import `%`
-from math import sin, cos, arctan2, degToRad, sqrt
+import math
 
 type
   LengthMeasure* = enum
@@ -9,7 +8,7 @@ type
     Angstroms, Nanometres, Micrometres, Thou, Millimetres, Centimetres, Inches, 
     Decimetres, Feet, Yards, Metres, Fathoms, HorseLengths, Rods, Decametres, 
     Chains, Hectometres, Furlongs, Kilometres, Miles, NauticalMiles, Leagues, 
-    EarthRadii, LunarDistances, Megametres, Gigametres, AstronomicalUnits, 
+    Megametres, EarthRadii, LunarDistances, Gigametres, AstronomicalUnits, 
     Terametres, Petametres, LightYears, Parsecs, Exametres, HubbleLengths, 
     Zettametres, Yottametres
   Distance* = object
@@ -17,49 +16,49 @@ type
     units*: LengthMeasure
   Point* = tuple[latitude, longitude: float]
 
-const relative_lengths* = {
-  PlanckLength: 1.62e-35,
-  Yoctometres: 1e-24,
-  Zeptometres: 1e-21,
-  Attometres: 1e-18,
-  Femtometres: 1e-15,
-  Picometres: 1e-12,
-  Angstroms: 1e-10,
-  Nanometres: 1e-9,
-  Micrometres: 1e-6,
-  Thou: 2.54e-5,
-  Millimetres: 1e-3,
-  Centimetres: 1e-2,
-  Inches: 0.0254,
-  Decimetres: 1e-1,
-  Feet: 0.3048,
-  Yards: 0.9144,
-  Metres: 1.0,
-  Fathoms: 1.8288,
-  HorseLengths: 2.4,
-  Rods: 5.0292,
-  Decametres: 1e1,
-  Chains: 20.1168,
-  Hectometres: 1e2,
-  Furlongs: 201.1680,
-  Kilometres: 1e3,
-  Miles: 1_609.344,
-  NauticalMiles: 1852.0,
-  Leagues: 5556.0,
-  Megametres: 1e6,
-  EarthRadii: 6.371009e6,
-  LunarDistances: 3.84402e8,
-  Gigametres: 1e9,
-  AstronomicalUnits: 1.495978707e11,
-  Terametres: 1e12,
-  Petametres: 1e15,
-  LightYears: 9.4607304725808e15,
-  Parsecs: 3.08567758146719e16,
-  Exametres: 1e18,
-  HubbleLengths: 1.40398329956757145e20,
-  Zettametres: 1e21,
-  Yottametres: 1e24
-}.toTable
+const length_multipliers* = [
+  1.62e-35,
+  1e-24,
+  1e-21,
+  1e-18,
+  1e-15,
+  1e-12,
+  1e-10,
+  1e-9,
+  1e-6,
+  2.54e-5,
+  1e-3,
+  1e-2,
+  0.0254,
+  1e-1,
+  0.3048,
+  0.9144,
+  1.0,
+  1.8288,
+  2.4,
+  5.0292,
+  1e1,
+  20.1168,
+  1e2,
+  201.1680,
+  1e3,
+  1_609.344,
+  1852.0,
+  5556.0,
+  1e6,
+  6.371009e6,
+  3.84402e8,
+  1e9,
+  1.495978707e11,
+  1e12,
+  1e15,
+  9.4607304725808e15,
+  3.08567758146719e16,
+  1e18,
+  1.40398329956757145e20,
+  1e21,
+  1e24
+]
 
 proc newDistance*(size: float, unit_type: LengthMeasure): Distance =
   Distance(size: size, units: unit_type)
@@ -68,7 +67,7 @@ proc newPoint*(latitude, longitude: float): Point =
   (latitude: latitude, longitude: longitude)
 
 proc sizeAs*(measurement: Distance, units: LengthMeasure): float =
-  measurement.size * relative_lengths[measurement.units] /  relative_lengths[units]
+  measurement.size * length_multipliers[ord(measurement.units)] /  length_multipliers[ord(units)]
 
 proc to*(measurement: var Distance, units: LengthMeasure) =
   measurement.size = measurement.sizeAs(units)
@@ -87,9 +86,9 @@ proc getHaversineDistance(pointA, pointB: Point, units: LengthMeasure = Metres):
         cos(pointA.latitude.degToRad) * cos(pointB.latitude.degToRad) * 
         sin((pointB.longitude - pointA.longitude).degToRad / 2) *
         sin((pointB.longitude - pointA.longitude).degToRad / 2)
-      b = 6.371009e6 * 2 * arctan2(sqrt(a), sqrt(1 - a))
-    Distance(size: b * relative_lengths[Metres] / 
-      relative_lengths[units], units: units)
+      distance = 6.371009e6 * 2 * arctan2(sqrt(a), sqrt(1 - a))
+    Distance(size: distance * length_multipliers[ord(Metres)] / 
+      length_multipliers[ord(units)], units: units)
 
 proc `==` *(a, b: Distance): bool =
   if a.units == b.units:
@@ -168,6 +167,61 @@ proc `echo` *(a: Distance) =
 
 proc `$` *(a: Distance) =
   echo "$1 $2" % [$a.size, $a.units]
-  
-#TODO: Add Point procs, great circle and vincenty distance calculations
 
+proc getVincentyDistance(pointA, pointB: Point, units: LengthMeasure): Distance = 
+  ## NEEDS TESTING, OPTIMISATION AND CLEANUP
+  if pointA == pointB:
+    return Distance(size: 0.0, units: units)
+  var
+    major = 6378137.0
+    minor = 6356752.3142
+    flattening = 1 / 298.257223563
+    iterations = 200
+    convergenceThreshold = 1e-12
+    λ = degToRad(pointB.longitude - pointA.longitude)
+    sinU1 = math.sin(arctan((1 - flattening) * tan(degToRad(pointA.latitude))))
+    cosU1 = math.cos(arctan((1 - flattening) * tan(degToRad(pointA.latitude))))
+    sinU2 = math.sin(arctan((1 - flattening) * tan(degToRad(pointB.latitude))))
+    cosU2 = math.cos(arctan((1 - flattening) * tan(degToRad(pointB.latitude))))
+
+  for iteration in 0..iterations:
+    var
+      sinλ = math.sin(λ)
+      cosλ = math.cos(λ)
+      sinσ = math.sqrt(pow((cosU2 * sinλ), 2) +
+                           pow((cosU1 * sinU2 - sinU1 * cosU2 * cosλ), 2))
+    if sinσ == 0:
+        return Distance(size: 0.0, units: units)  # coincident points
+    var
+      cosσ = sinU1 * sinU2 + cosU1 * cosU2 * cosλ
+      σ = math.arctan2(sinσ, cosσ)
+      sinα = cosU1 * cosU2 * sinλ / sinσ
+      cosSqα = pow(1 - sinα, 2)
+      cos2σM: float
+    try:
+      cos2σM = cosσ - 2 * sinU1 * sinU2 / cosSqα
+    except DivByZeroError:
+      cos2σM = 0.0
+    var
+      C = flattening / 16 * cosSqα * (4 + flattening * (4 - 3 * cosSqα))
+      LambdaPrev = λ
+      λ = λ + (1 - C) * flattening * sinα * (σ + C * sinσ *
+                                           (cos2σM + C * cosσ *
+                                            pow(-1 + 2 * cos2σM, 2)))
+    if abs(λ - LambdaPrev) < convergenceThreshold:
+        break  # successful convergence
+    #else:
+    #  return Distance(size: 0.0, units: units)  # failure to converge
+    var
+      uSq = cosSqα * (pow(major, 2) - pow(minor, 2)) / pow(minor, 2)
+      A = 1 + uSq / 16384.0 * (4096.0 + uSq * (-768.0 + uSq * (320.0 - 175.0 * uSq)))
+      B = uSq / 1024.0 * (256.0 + uSq * (-128.0 + uSq * (74.0 - 47.0 * uSq)))
+      deltaSigma = B * sinσ * (cos2σM + B / 4.0 * (cosσ *
+                   (-1 + 2 * pow(cos2σM, 2)) - B / 6 * cos2σM *
+                   (-3 + 4 * pow(sinσ, 2)) * (-3 + 4 * pow(cos2σM, 2))))
+      s = minor * A * (σ - deltaSigma)
+      distInMetres = Distance(size: round(s, 6), units: Metres)
+    distInMetres.to(units)
+    return distInMetres
+    
+    
