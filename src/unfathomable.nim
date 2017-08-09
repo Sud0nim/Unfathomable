@@ -191,7 +191,7 @@ proc getVincentyDistance(pointA, pointB: Point, units: LengthMeasure): Distance 
       sinσ = math.sqrt(pow((cosU2 * sinλ), 2) +
                            pow((cosU1 * sinU2 - sinU1 * cosU2 * cosλ), 2))
     if sinσ == 0:
-        return Distance(size: 0.0, units: units)  # coincident points
+        return Distance(size: 0.0, units: units)
     var
       cosσ = sinU1 * sinU2 + cosU1 * cosU2 * cosλ
       σ = math.arctan2(sinσ, cosσ)
@@ -209,9 +209,9 @@ proc getVincentyDistance(pointA, pointB: Point, units: LengthMeasure): Distance 
                                            (cos2σM + C * cosσ *
                                             pow(-1 + 2 * cos2σM, 2)))
     if abs(λ - LambdaPrev) < convergenceThreshold:
-        break  # successful convergence
+        break 
     #else:
-    #  return Distance(size: 0.0, units: units)  # failure to converge
+    #  return Distance(size: 0.0, units: units) # needs to be fixed
     var
       uSq = cosSqα * (pow(major, 2) - pow(minor, 2)) / pow(minor, 2)
       A = 1 + uSq / 16384.0 * (4096.0 + uSq * (-768.0 + uSq * (320.0 - 175.0 * uSq)))
