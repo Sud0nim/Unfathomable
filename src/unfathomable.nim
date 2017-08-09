@@ -184,7 +184,7 @@ proc getVincentyDistance(pointA, pointB: Point, units: LengthMeasure): Distance 
     sinU2 = math.sin(arctan((1 - flattening) * tan(degToRad(pointB.latitude))))
     cosU2 = math.cos(arctan((1 - flattening) * tan(degToRad(pointB.latitude))))
 
-  for iteration in 0..iterations:
+  for iteration in 0..<iterations:
     var
       sinλ = math.sin(λ)
       cosλ = math.cos(λ)
