@@ -82,10 +82,10 @@ proc getHaversineDistance(pointA, pointB: Point, units: LengthMeasure = Metres):
   else:
     let 
       a = sin((pointB.latitude - pointA.latitude).degToRad / 2) * 
-        sin((pointB.latitude - pointA.latitude).degToRad / 2) + 
-        cos(pointA.latitude.degToRad) * cos(pointB.latitude.degToRad) * 
-        sin((pointB.longitude - pointA.longitude).degToRad / 2) *
-        sin((pointB.longitude - pointA.longitude).degToRad / 2)
+          sin((pointB.latitude - pointA.latitude).degToRad / 2) + 
+          cos(pointA.latitude.degToRad) * cos(pointB.latitude.degToRad) * 
+          sin((pointB.longitude - pointA.longitude).degToRad / 2) *
+          sin((pointB.longitude - pointA.longitude).degToRad / 2)
       distance = 6.371009e6 * 2 * arctan2(sqrt(a), sqrt(1 - a))
     Distance(size: distance * length_multipliers[ord(Metres)] / 
       length_multipliers[ord(units)], units: units)
