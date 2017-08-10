@@ -107,12 +107,24 @@ proc `>` *(a, b: Distance): bool =
     a.size > b.size
   else:
     a.size > b.sizeAs(a.units)
+    
+proc `>=` *(a, b: Distance): bool =
+  if a.units == b.units:
+    a.size >= b.size
+  else:
+    a.size >= b.sizeAs(a.units)
 
 proc `<` *(a, b: Distance): bool =
   if a.units == b.units:
     a.size < b.size
   else:
     a.size < b.sizeAs(a.units)
+    
+proc `<=` *(a, b: Distance): bool =
+  if a.units == b.units:
+    a.size <= b.size
+  else:
+    a.size <= b.sizeAs(a.units)
 
 proc `+` *(a, b: Distance): Distance =
   if a.units == b.units:
@@ -125,6 +137,12 @@ proc `+` *(a: float; b: Distance): Distance =
 
 proc `+` *(a: Distance; b: float): Distance =
   Distance(size: a.size + b, units: a.units)
+
+proc `+=` *(a: var Distance, b: Distance) =
+  if a.units == b.units:
+    a.size = a.size + b.size
+  else:
+    a.size = a.size + b.sizeAs(a.units)
 
 proc `-` *(a, b: Distance): Distance =
   if a.units == b.units:
@@ -140,6 +158,12 @@ proc `-` *(a: Distance; b: float): Distance =
 
 proc `-` *(a: Point; b: Point): Distance =
   getHaversineDistance(a, b)
+  
+proc `-=` *(a: var Distance, b: Distance) =
+  if a.units == b.units:
+    a.size = a.size - b.size
+  else:
+    a.size = a.size - b.sizeAs(a.units)
 
 proc `*` *(a, b: Distance): Distance =
   if a.units == b.units:
@@ -153,6 +177,12 @@ proc `*` *(a: float; b: Distance): Distance =
 proc `*` *(a: Distance; b: float): Distance =
   Distance(size: a.size * b, units: a.units)
 
+proc `*=` *(a: var Distance, b: Distance) =
+  if a.units == b.units:
+    a.size = a.size * b.size
+  else:
+    a.size = a.size * b.sizeAs(a.units)
+
 proc `/` *(a, b: Distance): Distance =
   if a.units == b.units:
     Distance(size: a.size / b.size, units: a.units)
@@ -162,56 +192,61 @@ proc `/` *(a, b: Distance): Distance =
 proc `/` *(a: Distance; b: float): Distance =
   Distance(size: a.size / b, units: a.units)
 
+proc `/=` *(a: var Distance, b: Distance) =
+  if a.units == b.units:
+    a.size = a.size / b.size
+  else:
+    a.size = a.size / b.sizeAs(a.units)
+
 proc `echo` *(a: Distance) =
   echo "$1 $2" % [$a.size, $a.units]
 
 proc `$` *(a: Distance) =
   echo "$1 $2" % [$a.size, $a.units]
 
-proc getVincentyDistance(pointA, pointB: Point, units: LengthMeasure): Distance = 
+proc getVincentyDistance(pointA, pointB: Point, units: LengthMeasure = Metres): Distance = 
   ## NEEDS TESTING, OPTIMISATION AND CLEANUP
   if pointA == pointB:
     return Distance(size: 0.0, units: units)
-  var
+  let
     major = 6378137.0
     minor = 6356752.3142
     flattening = 1 / 298.257223563
     iterations = 200
     convergenceThreshold = 1e-12
-    λ = degToRad(pointB.longitude - pointA.longitude)
     sinU1 = math.sin(arctan((1 - flattening) * tan(degToRad(pointA.latitude))))
     cosU1 = math.cos(arctan((1 - flattening) * tan(degToRad(pointA.latitude))))
     sinU2 = math.sin(arctan((1 - flattening) * tan(degToRad(pointB.latitude))))
     cosU2 = math.cos(arctan((1 - flattening) * tan(degToRad(pointB.latitude))))
-
-  for iteration in 0..<iterations:
-    var
+  var
+    λ = degToRad(pointB.longitude - pointA.longitude)
+  for iteration in 0..iterations:
+    let
       sinλ = math.sin(λ)
       cosλ = math.cos(λ)
       sinσ = math.sqrt(pow((cosU2 * sinλ), 2) +
-                           pow((cosU1 * sinU2 - sinU1 * cosU2 * cosλ), 2))
+             pow((cosU1 * sinU2 - sinU1 * cosU2 * cosλ), 2))
     if sinσ == 0:
-        return Distance(size: 0.0, units: units)
-    var
+        return Distance(size: 0.0, units: units)  # coincident points
+    let
       cosσ = sinU1 * sinU2 + cosU1 * cosU2 * cosλ
       σ = math.arctan2(sinσ, cosσ)
       sinα = cosU1 * cosU2 * sinλ / sinσ
       cosSqα = pow(1 - sinα, 2)
-      cos2σM: float
+    var cos2σM: float
     try:
       cos2σM = cosσ - 2 * sinU1 * sinU2 / cosSqα
     except DivByZeroError:
       cos2σM = 0.0
-    var
+    let
       C = flattening / 16 * cosSqα * (4 + flattening * (4 - 3 * cosSqα))
       previousλ = λ
       λ = λ + (1 - C) * flattening * sinα * (σ + C * sinσ *
-                                           (cos2σM + C * cosσ *
-                                            pow(-1 + 2 * cos2σM, 2)))
+          (cos2σM + C * cosσ * pow(-1 + 2 * cos2σM, 2)))
     if abs(λ - previousλ) < convergenceThreshold:
-        break 
+        break  # successful convergence
     #else:
-    #  return Distance(size: 0.0, units: units) # needs to be fixed
+    #  return Distance(size: 0.0, units: units)  # failure to converge
     var
       uSq = cosSqα * (pow(major, 2) - pow(minor, 2)) / pow(minor, 2)
       A = 1 + uSq / 16384.0 * (4096.0 + uSq * (-768.0 + uSq * (320.0 - 175.0 * uSq)))
@@ -223,5 +258,19 @@ proc getVincentyDistance(pointA, pointB: Point, units: LengthMeasure): Distance 
       distInMetres = Distance(size: round(s, 6), units: Metres)
     distInMetres.to(units)
     return distInMetres
+
+proc getHaversineDistance(points: varargs[Point], units: LengthMeasure = Metres): Distance =
+  ## ASSUMES A PATH BETWEEN POINTS IN ORDER POINTS GIVEN, e.g A -> B -> C
+  var cumulativeDistance = Distance(size: 0.0, units: units)
+  for i in 0..<points.len - 1:
+    cumulativeDistance = cumulativeDistance + getHaversineDistance(points[i], points[i + 1], units)
+  cumulativeDistance
+
+proc getVincentyDistance(points: varargs[Point], units: LengthMeasure = Metres): Distance =
+  ## ASSUMES A PATH BETWEEN POINTS IN ORDER POINTS GIVEN, e.g A -> B -> C
+  var cumulativeDistance = Distance(size: 0.0, units: units)
+  for i in 0..<points.len - 1:
+    cumulativeDistance += getVincentyDistance(points[i], points[i + 1], units)
+  cumulativeDistance
     
     
