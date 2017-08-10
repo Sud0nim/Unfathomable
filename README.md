@@ -68,6 +68,15 @@ Arithmetic and boolean checks with distance objects:
     echo someDistance < otherDistance
     echo someDistance == anotherDistance
     echo someDistance != otherDistance
+    # In place arithmetic
+    someDistance += otherDistance
+    echo someDistance
+    someDistance -= otherDistance
+    echo someDistance
+    someDistance *= otherDistance
+    echo someDistance
+    someDistance /= otherDistance
+    echo someDistance
 
     
 Output:
@@ -83,20 +92,48 @@ Output:
     false
     true
     true
+    1.1 Kilometres
+    1.0 Kilometres
+    0.1 Kilometres
+    1.0 Kilometres
 
-Find Haversine distance between two points:
+Find Haversine distance between points:
 
     var 
       p1 = newPoint(40.7486, -73.9864)
       p2 = newPoint(26.22, -50.0)
+      p3 = newPoint(-26.22, 50.0)
     
-    echo getHaversineDistance(p1, p2, Kilometres)
     echo p1 - p2
-    echo((p2 - p1).copyAs(Yards))
+    echo getHaversineDistance(p1, p2, Kilometres)
+    echo getHaversineDistance(p2, p3, Kilometres)
+    echo getHaversineDistance(p1, p2, p3, Kilometres)
+    echo getHaversineDistance(p1, p2, p3, p1, Kilometres)
     
 Output:
     
-    2733.944610522819 Kilometres
     2733944.610522819 Metres
-    2989878.18298646 Yards
+    2733.944610522819 Kilometres
+    12183.62598175088 Kilometres
+    14917.5705922737 Kilometres
+    29588.23424886339 Kilometres
+    
+Find Vincenty distance between points:
+
+    var 
+      p1 = newPoint(40.7486, -73.9864)
+      p2 = newPoint(26.22, -50.0)
+      p3 = newPoint(-26.22, 50.0)
+
+    echo getVincentyDistance(p1, p2, Kilometres)
+    echo getVincentyDistance(p2, p3, Kilometres)
+    echo getVincentyDistance(p1, p2, p3, Kilometres)
+    echo getVincentyDistance(p1, p2, p3, p1, Kilometres)
+    
+Output:
+
+    2731.048093986 Kilometres
+    12147.168393401 Kilometres
+    14878.216487387 Kilometres
+    29599.195015569 Kilometres
     
