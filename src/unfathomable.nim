@@ -213,7 +213,7 @@ proc getVincentyDistance(pointA, pointB: Point, units: LengthMeasure = Metres): 
     minor = 6356752.3142
     flattening = 1 / 298.257223563
     iterations = 200
-    convergenceThreshold = 1e-12
+    #convergenceThreshold = 1e-12
     sinU1 = math.sin(arctan((1 - flattening) * tan(degToRad(pointA.latitude))))
     cosU1 = math.cos(arctan((1 - flattening) * tan(degToRad(pointA.latitude))))
     sinU2 = math.sin(arctan((1 - flattening) * tan(degToRad(pointB.latitude))))
@@ -243,8 +243,8 @@ proc getVincentyDistance(pointA, pointB: Point, units: LengthMeasure = Metres): 
       previousλ = λ
       λ = λ + (1 - C) * flattening * sinα * (σ + C * sinσ *
           (cos2σM + C * cosσ * pow(-1 + 2 * cos2σM, 2)))
-    if abs(λ - previousλ) < convergenceThreshold:
-        break  # successful convergence
+    #if abs(λ - previousλ) < convergenceThreshold:
+    #    break  # successful convergence
     #else:
     #  return Distance(size: 0.0, units: units)  # failure to converge
     var
