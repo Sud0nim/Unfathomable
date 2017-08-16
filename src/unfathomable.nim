@@ -90,122 +90,122 @@ proc getHaversineDistance(pointA, pointB: Point, units: LengthMeasure = Metres):
     Distance(size: distance * length_multipliers[ord(Metres)] / 
       length_multipliers[ord(units)], units: units)
 
-proc `==` *(a, b: Distance): bool =
+template `==` *(a, b: Distance): bool =
   if a.units == b.units:
     a.size == b.size
   else:
     a.size == b.sizeAs(a.units)
 
-proc `!=` *(a, b: Distance): bool =
+template `!=` *(a, b: Distance): bool =
   if a.units == b.units:
     a.size != b.size
   else:
     a.size != b.sizeAs(a.units)
 
-proc `>` *(a, b: Distance): bool =
+template `>` *(a, b: Distance): bool =
   if a.units == b.units:
     a.size > b.size
   else:
     a.size > b.sizeAs(a.units)
     
-proc `>=` *(a, b: Distance): bool =
+template `>=` *(a, b: Distance): bool =
   if a.units == b.units:
     a.size >= b.size
   else:
     a.size >= b.sizeAs(a.units)
 
-proc `<` *(a, b: Distance): bool =
+template `<` *(a, b: Distance): bool =
   if a.units == b.units:
     a.size < b.size
   else:
     a.size < b.sizeAs(a.units)
     
-proc `<=` *(a, b: Distance): bool =
+template `<=` *(a, b: Distance): bool =
   if a.units == b.units:
     a.size <= b.size
   else:
     a.size <= b.sizeAs(a.units)
 
-proc `+` *(a, b: Distance): Distance =
+template `+` *(a, b: Distance): Distance =
   if a.units == b.units:
     Distance(size: a.size + b.size, units: a.units)
   else:
     Distance(size: a.size + b.sizeAs(a.units), units: a.units)
 
-proc `+` *(a: float; b: Distance): Distance =
+template `+` *(a: float; b: Distance): Distance =
   Distance(size: a + b.size, units: b.units)
 
-proc `+` *(a: Distance; b: float): Distance =
+template `+` *(a: Distance; b: float): Distance =
   Distance(size: a.size + b, units: a.units)
 
-proc `+=` *(a: var Distance, b: Distance) =
+template `+=` *(a: var Distance, b: Distance) =
   if a.units == b.units:
     a.size = a.size + b.size
   else:
     a.size = a.size + b.sizeAs(a.units)
 
-proc `-` *(a, b: Distance): Distance =
+template `-` *(a, b: Distance): Distance =
   if a.units == b.units:
     Distance(size: a.size - b.size, units: a.units)
   else:
     Distance(size: a.size - b.sizeAs(a.units), units: a.units)  
 
-proc `-` *(a: float; b: Distance): Distance =
+template `-` *(a: float; b: Distance): Distance =
   Distance(size: a - b.size, units: b.units)
 
-proc `-` *(a: Distance; b: float): Distance =
+template `-` *(a: Distance; b: float): Distance =
   Distance(size: a.size - b, units: a.units)
 
-proc `-` *(a: Point; b: Point): Distance =
+template `-` *(a: Point; b: Point): Distance =
   getHaversineDistance(a, b)
   
-proc `-=` *(a: var Distance, b: Distance) =
+template `-=` *(a: var Distance, b: Distance) =
   if a.units == b.units:
     a.size = a.size - b.size
   else:
     a.size = a.size - b.sizeAs(a.units)
 
-proc `*` *(a, b: Distance): Distance =
+template `*` *(a, b: Distance): Distance =
   if a.units == b.units:
     Distance(size: a.size * b.size, units: a.units)
   else:
     Distance(size: a.size * b.sizeAs(a.units), units: a.units)
 
-proc `*` *(a: float; b: Distance): Distance =
+template `*` *(a: float; b: Distance): Distance =
   Distance(size: a * b.size, units: b.units)
 
-proc `*` *(a: Distance; b: float): Distance =
+template `*` *(a: Distance; b: float): Distance =
   Distance(size: a.size * b, units: a.units)
 
-proc `*=` *(a: var Distance, b: Distance) =
+template `*=` *(a: var Distance, b: Distance) =
   if a.units == b.units:
     a.size = a.size * b.size
   else:
     a.size = a.size * b.sizeAs(a.units)
 
-proc `/` *(a, b: Distance): Distance =
+template `/` *(a, b: Distance): Distance =
   if a.units == b.units:
     Distance(size: a.size / b.size, units: a.units)
   else:
     Distance(size: a.size / b.sizeAs(a.units), units: a.units)
 
-proc `/` *(a: Distance; b: float): Distance =
+template `/` *(a: Distance; b: float): Distance =
   Distance(size: a.size / b, units: a.units)
 
-proc `/=` *(a: var Distance, b: Distance) =
+template `/=` *(a: var Distance, b: Distance) =
   if a.units == b.units:
     a.size = a.size / b.size
   else:
     a.size = a.size / b.sizeAs(a.units)
 
-proc `echo` *(a: Distance) =
+template `echo` *(a: Distance) =
   echo "$1 $2" % [$a.size, $a.units]
 
-proc `$` *(a: Distance) =
+template `$` *(a: Distance) =
   echo "$1 $2" % [$a.size, $a.units]
 
 proc getVincentyDistance(pointA, pointB: Point, units: LengthMeasure = Metres): Distance = 
-  ## NEEDS TESTING, OPTIMISATION AND CLEANUP
+  ## NEEDS FIXES, TESTING, OPTIMISATION AND CLEANUP
   if pointA == pointB:
     return Distance(size: 0.0, units: units)
   let
@@ -243,10 +243,6 @@ proc getVincentyDistance(pointA, pointB: Point, units: LengthMeasure = Metres): 
       previousλ = λ
       λ = λ + (1 - C) * flattening * sinα * (σ + C * sinσ *
           (cos2σM + C * cosσ * pow(-1 + 2 * cos2σM, 2)))
-    #if abs(λ - previousλ) < convergenceThreshold:
-    #    break  # successful convergence
-    #else:
-    #  return Distance(size: 0.0, units: units)  # failure to converge
     var
       uSq = cosSqα * (pow(major, 2) - pow(minor, 2)) / pow(minor, 2)
       A = 1 + uSq / 16384.0 * (4096.0 + uSq * (-768.0 + uSq * (320.0 - 175.0 * uSq)))
