@@ -1,5 +1,4 @@
 
-from strutils import `%`
 import math
 
 type
@@ -199,10 +198,16 @@ template `/=` *(a: var Distance, b: Distance) =
     a.size = a.size / b.sizeAs(a.units)
 
 template `echo` *(a: Distance) =
-  echo "$1 $2" % [$a.size, $a.units]
+  echo($a.size & " " & $a.units)
 
-template `$` *(a: Distance) =
-  echo "$1 $2" % [$a.size, $a.units]
+template `$` *(a: Distance): string =
+  $a.size & " " & $a.units
+  
+template `echo` *(a: Point) =
+  echo("Latitude: " & $a.latitude & ", Longitude: " & $a.longitude)
+
+template `$` *(a: Point): string =
+  "Latitude: " & $a.latitude & ", Longitude: " & $a.longitude
 
 proc getVincentyDistance(pointA, pointB: Point, units: LengthMeasure = Metres): Distance = 
   ## NEEDS FIXES, TESTING, OPTIMISATION AND CLEANUP
