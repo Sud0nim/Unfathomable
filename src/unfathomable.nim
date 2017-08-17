@@ -210,55 +210,59 @@ template `$` *(a: Point): string =
   "Latitude: " & $a.latitude & ", Longitude: " & $a.longitude
 
 proc getVincentyDistance(pointA, pointB: Point, units: LengthMeasure = Metres): Distance = 
-  ## NEEDS FIXES, TESTING, OPTIMISATION AND CLEANUP
+  ## Rewritten based on wikipedia iterative method, but needs massive cleanup and optimisation still
+  # TODO: where possible simplify/optimise calculations, remove varaible declarations, reformat, rename variables, error handling.
   if pointA == pointB:
     return Distance(size: 0.0, units: units)
   let
     major = 6378137.0
-    minor = 6356752.3142
+    minor = 6356752.314245
     flattening = 1 / 298.257223563
     iterations = 200
-    #convergenceThreshold = 1e-12
-    sinU1 = math.sin(arctan((1 - flattening) * tan(degToRad(pointA.latitude))))
-    cosU1 = math.cos(arctan((1 - flattening) * tan(degToRad(pointA.latitude))))
-    sinU2 = math.sin(arctan((1 - flattening) * tan(degToRad(pointB.latitude))))
-    cosU2 = math.cos(arctan((1 - flattening) * tan(degToRad(pointB.latitude))))
+    convergenceThreshold = 1e-12
+    u1 = arctan((1 - flattening) * tan(degToRad(pointA.latitude)))
+    u2 = arctan((1 - flattening) * tan(degToRad(pointB.latitude)))
+    l = degToRad(pointB.longitude - pointA.longitude)
   var
     λ = degToRad(pointB.longitude - pointA.longitude)
-  for iteration in 0..iterations:
-    let
-      sinλ = math.sin(λ)
-      cosλ = math.cos(λ)
-      sinσ = math.sqrt(pow((cosU2 * sinλ), 2) +
-             pow((cosU1 * sinU2 - sinU1 * cosU2 * cosλ), 2))
-    if sinσ == 0:
-        return Distance(size: 0.0, units: units)  # coincident points
-    let
-      cosσ = sinU1 * sinU2 + cosU1 * cosU2 * cosλ
-      σ = math.arctan2(sinσ, cosσ)
-      sinα = cosU1 * cosU2 * sinλ / sinσ
-      cosSqα = pow(1 - sinα, 2)
-    var cos2σM: float
+    sinλ: float
+    cosλ: float # TODO: Clean up any unused variables asap
+    sinσ: float
+    cos2σM: float
+    cosσ: float
+    σ: float
+    sinα: float
+    cosSqα: float
+    c: float
+    previousλ: float
+  for iteration in 0..<iterations:
+    sinσ = sqrt(
+             pow((cos(u2) * sin(λ)), 2) +
+             pow((cos(u1) * sin(u2) - sin(u1) * cos(u2) * cos(λ)), 2)
+               )
+    cosσ = sin(u1) * sin(u2) + cos(u1) * cos(u2) * cos(λ)
+    σ = arctan(sinσ / cosσ)
+    sinα = (cos(u1) * cos(u2) * sin(λ)) / sinσ
+    cosSqα = 1 - pow(sinα, 2)
     try:
-      cos2σM = cosσ - 2 * sinU1 * sinU2 / cosSqα
+      cos2σM = cosσ - (2 * sin(u1) * sin(u2) / cosSqα)
     except DivByZeroError:
       cos2σM = 0.0
-    let
-      C = flattening / 16 * cosSqα * (4 + flattening * (4 - 3 * cosSqα))
-      previousλ = λ
-      λ = λ + (1 - C) * flattening * sinα * (σ + C * sinσ *
-          (cos2σM + C * cosσ * pow(-1 + 2 * cos2σM, 2)))
-    var
-      uSq = cosSqα * (pow(major, 2) - pow(minor, 2)) / pow(minor, 2)
-      A = 1 + uSq / 16384.0 * (4096.0 + uSq * (-768.0 + uSq * (320.0 - 175.0 * uSq)))
-      B = uSq / 1024.0 * (256.0 + uSq * (-128.0 + uSq * (74.0 - 47.0 * uSq)))
-      deltaSigma = B * sinσ * (cos2σM + B / 4.0 * (cosσ *
-                   (-1 + 2 * pow(cos2σM, 2)) - B / 6 * cos2σM *
-                   (-3 + 4 * pow(sinσ, 2)) * (-3 + 4 * pow(cos2σM, 2))))
-      s = minor * A * (σ - deltaSigma)
-      distInMetres = Distance(size: round(s, 6), units: Metres)
-    distInMetres.to(units)
-    return distInMetres
+    c = (flattening / 16) * cosSqα * (4 + flattening * (4 - 3 * cosSqα))
+    previousλ = λ
+    λ = l + (1 - c) * flattening * sinα * (σ + c * sinσ * (cos2σM + c * cosσ * (-1 + 2 * pow(cos2σM, 2))))
+    if abs(λ - previousλ) < convergenceThreshold:
+      var
+        uSq = cosSqα * ((pow(major, 2) - pow(minor, 2)) / pow(minor, 2))
+        A = 1 + (uSq / 16384) * (4096 + uSq * (-768 + uSq * (320 - 175 * uSq)))
+        B = (uSq / 1024) * (256 + uSq * (-128 + uSq * (74 - 47 * uSq)))
+        deltaSigma = B * sinσ * (cos2σM + (1 / 4) * B * (cosσ * (-1 + 2 * pow(cos2σM, 2)) - (B / 6) * cos2σM * (-3 + 4 * pow(sinσ, 2)) * (-3 + 4 * pow(cos2σM, 2))))
+        s = minor * A * (σ - deltaSigma)
+        # add azimuths here
+        distInMetres = Distance(size: abs(s), units: Metres)
+      distInMetres.to(units)
+      return distInMetres
+  return Distance(size: 0.0, units: units)
 
 proc getHaversineDistance(points: varargs[Point], units: LengthMeasure = Metres): Distance =
   ## ASSUMES A PATH BETWEEN POINTS IN ORDER POINTS GIVEN, e.g A -> B -> C
