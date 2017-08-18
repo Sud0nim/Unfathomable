@@ -210,8 +210,8 @@ template `$` *(a: Point): string =
   "Latitude: " & $a.latitude & ", Longitude: " & $a.longitude
 
 proc getVincentyDistance(pointA, pointB: Point, units: LengthMeasure = Metres): Distance = 
-  ## Rewritten based on wikipedia iterative method, but needs massive cleanup and optimisation still
-  # TODO: where possible simplify/optimise calculations, remove varaible declarations, reformat, rename variables, error handling.
+  ## Rewritten based on wikipedia iterative method
+  ## TODO: rename variables, error handling.
   if pointA == pointB:
     return Distance(size: 0.0, units: units)
   let
@@ -220,47 +220,45 @@ proc getVincentyDistance(pointA, pointB: Point, units: LengthMeasure = Metres): 
     flattening = 1 / 298.257223563
     iterations = 200
     convergenceThreshold = 1e-12
-    u1 = arctan((1 - flattening) * tan(degToRad(pointA.latitude)))
-    u2 = arctan((1 - flattening) * tan(degToRad(pointB.latitude)))
-    l = degToRad(pointB.longitude - pointA.longitude)
+    cosU1 = cos(arctan((1 - flattening) * tan(degToRad(pointA.latitude))))
+    cosU2 = cos(arctan((1 - flattening) * tan(degToRad(pointB.latitude))))
+    sinU1 = sin(arctan((1 - flattening) * tan(degToRad(pointA.latitude))))
+    sinU2 = sin(arctan((1 - flattening) * tan(degToRad(pointB.latitude))))
+    initialλ = degToRad(pointB.longitude - pointA.longitude)
   var
     λ = degToRad(pointB.longitude - pointA.longitude)
-    sinλ: float
-    cosλ: float # TODO: Clean up any unused variables asap
-    sinσ: float
-    cos2σM: float
-    cosσ: float
-    σ: float
-    sinα: float
-    cosSqα: float
-    c: float
-    previousλ: float
+    sinσ, cos2σM, cosσ, σ, sinα, cosSqα, c, previousλ, sinλ, cosλ: float
   for iteration in 0..<iterations:
-    sinσ = sqrt(
-             pow((cos(u2) * sin(λ)), 2) +
-             pow((cos(u1) * sin(u2) - sin(u1) * cos(u2) * cos(λ)), 2)
-               )
-    cosσ = sin(u1) * sin(u2) + cos(u1) * cos(u2) * cos(λ)
-    σ = arctan(sinσ / cosσ)
-    sinα = (cos(u1) * cos(u2) * sin(λ)) / sinσ
+    sinλ = sin(λ)
+    cosλ = cos(λ)
+    sinσ = sqrt(pow((cosU2 * sinλ), 2) +
+                pow((cosU1 * sinU2 - sinU1 * cosU2 * cosλ), 2))
+    cosσ = sinU1 * sinU2 + cosU1 * cosU2 * cosλ
+    σ = arctan2(sinσ, cosσ)
+    sinα = (cosU1 * cosU2 * sinλ) / sinσ
     cosSqα = 1 - pow(sinα, 2)
     try:
-      cos2σM = cosσ - (2 * sin(u1) * sin(u2) / cosSqα)
+      cos2σM = cosσ - (2 * sinU1 * sinU2 / cosSqα)
     except DivByZeroError:
       cos2σM = 0.0
     c = (flattening / 16) * cosSqα * (4 + flattening * (4 - 3 * cosSqα))
     previousλ = λ
-    λ = l + (1 - c) * flattening * sinα * (σ + c * sinσ * (cos2σM + c * cosσ * (-1 + 2 * pow(cos2σM, 2))))
+    λ = initialλ + (1 - c) * flattening * sinα * 
+        (σ + c * sinσ * (cos2σM + c * cosσ * 
+        (-1 + 2 * pow(cos2σM, 2))))
     if abs(λ - previousλ) < convergenceThreshold:
       var
         uSq = cosSqα * ((pow(major, 2) - pow(minor, 2)) / pow(minor, 2))
         A = 1 + (uSq / 16384) * (4096 + uSq * (-768 + uSq * (320 - 175 * uSq)))
         B = (uSq / 1024) * (256 + uSq * (-128 + uSq * (74 - 47 * uSq)))
-        deltaSigma = B * sinσ * (cos2σM + (1 / 4) * B * (cosσ * (-1 + 2 * pow(cos2σM, 2)) - (B / 6) * cos2σM * (-3 + 4 * pow(sinσ, 2)) * (-3 + 4 * pow(cos2σM, 2))))
-        s = minor * A * (σ - deltaSigma)
-        # add azimuths here
-        distInMetres = Distance(size: abs(s), units: Metres)
-      distInMetres.to(units)
+        deltaSigma = B * sinσ * (cos2σM + (1 / 4) * B * 
+                     (cosσ * (-1 + 2 * pow(cos2σM, 2)) - 
+                     (B / 6) * cos2σM * (-3 + 4 * pow(sinσ, 2)) * 
+                     (-3 + 4 * pow(cos2σM, 2))))
+        ellipsoidalDistance = minor * A * (σ - deltaSigma)
+        distInMetres = Distance(size: abs(ellipsoidalDistance), units: Metres)
+      if units != Metres:
+        distInMetres.to(units)
       return distInMetres
   return Distance(size: 0.0, units: units)
 
