@@ -63,7 +63,11 @@ proc newDistance*(size: float, unit_type: LengthMeasure): Distance =
   Distance(size: size, units: unit_type)
 
 proc newPoint*(latitude, longitude: float): Point =
-  (latitude: latitude, longitude: longitude)
+  if (latitude >= -90.0 and latitude <= 90.0) and 
+     (longitude >= -180.0 and longitude <= 180.0):
+    return (latitude: latitude, longitude: longitude)
+  else:
+    raise newException(IOError, "Point must be of valid latitude (-90 to 90) and longitude (-180 to 180).")
 
 proc sizeAs*(measurement: Distance, units: LengthMeasure): float =
   measurement.size * length_multipliers[ord(measurement.units)] /  length_multipliers[ord(units)]
