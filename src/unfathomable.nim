@@ -296,7 +296,7 @@ proc getHaversineDistance(points: seq[Point], units: LengthMeasure = Metres): Di
 iterator permutations*(points: seq[Point]): seq[Point] =
   # Adapted from https://bitbucket.org/nimcontrib/nimcombinatorics/src/4b61d417e9ad4386caf3791f1999fd9889193e01/combinatorics.nim?at=default&fileviewer=file-view-default
   # Credit/licence in licence file
-  # Iterates through all possible combinations of the letters in text
+  # Iterates through all possible combinations
   let n = len(points)
   var position = newSeq[int](n)
   var newPermutation = newSeq[Point](n)
