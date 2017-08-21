@@ -279,5 +279,56 @@ proc getVincentyDistance(points: varargs[Point], units: LengthMeasure = Metres):
   for i in 0..<points.len - 1:
     cumulativeDistance += getVincentyDistance(points[i], points[i + 1], units)
   cumulativeDistance
-    
+
+proc getBearing(pointA, pointB: Point): float =
+  let λ = degToRad(pointB.longitude - pointA.longitude)
+  radToDeg(arctan2(sin(λ) * cos(pointB.latitude), 
+           cos(pointA.latitude) * sin(pointB.latitude) - 
+           sin(pointA.latitude) * cos(pointB.latitude) * cos(λ)))
+
+proc getHaversineDistance(points: seq[Point], units: LengthMeasure = Metres): Distance =
+  ## ASSUMES A PATH BETWEEN POINTS IN ORDER POINTS GIVEN, e.g A -> B -> C
+  var cumulativeDistance = Distance(size: 0.0, units: units)
+  for i in 0..<points.len - 1:
+    cumulativeDistance = cumulativeDistance + getHaversineDistance(points[i], points[i + 1], units)
+  cumulativeDistance
+
+iterator permutations*(points: seq[Point]): seq[Point] =
+  # Adapted from https://bitbucket.org/nimcontrib/nimcombinatorics/src/4b61d417e9ad4386caf3791f1999fd9889193e01/combinatorics.nim?at=default&fileviewer=file-view-default
+  # Credit/licence in licence file
+  # Iterates through all possible combinations of the letters in text
+  let n = len(points)
+  var position = newSeq[int](n)
+  var newPermutation = newSeq[Point](n)
+  for i in 0..<n:
+    position[i] = i
+  while true:
+    for i in 0..<n:
+      newPermutation[i] = newPermutation[position[i]]
+      newPermutation[position[i]] = points[i]
+    yield newPermutation
+    var i = 1
+    while i < n:
+      position[i] -= 1
+      if position[i] < 0:
+        position[i] = i
+        i += 1
+      else:
+        break
+    if i >= n:
+      break
+
+proc getShortestDistance(points: varargs[Point], units: LengthMeasure = Metres): Distance = 
+  var point_list = newSeq[Point](0)
+  for point in points:
+    point_list.add(point)
+  echo point_list
+  var cumulativeDistance = getHaversineDistance(point_list, units)
+  for permutation in point_list.permutations:
+    var newDistance = getHaversineDistance(permutation, units)
+    if newDistance < cumulativeDistance:
+      cumulativeDistance = newDistance
+      echo permutation
+  cumulativeDistance
+
     
