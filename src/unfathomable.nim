@@ -293,30 +293,31 @@ proc getHaversineDistance(points: seq[Point], units: LengthMeasure = Metres): Di
     cumulativeDistance = cumulativeDistance + getHaversineDistance(points[i], points[i + 1], units)
   cumulativeDistance
 
-iterator permutations*(points: seq[Point]): seq[Point] =
-  # Adapted from https://bitbucket.org/nimcontrib/nimcombinatorics/src/4b61d417e9ad4386caf3791f1999fd9889193e01/combinatorics.nim?at=default&fileviewer=file-view-default
-  # Credit/licence in licence file
-  # Iterates through all possible combinations
-  let n = len(points)
-  var position = newSeq[int](n)
-  var newPermutation = newSeq[Point](n)
-  for i in 0..<n:
-    position[i] = i
-  while true:
-    for i in 0..<n:
-      newPermutation[i] = newPermutation[position[i]]
-      newPermutation[position[i]] = points[i]
-    yield newPermutation
-    var i = 1
-    while i < n:
-      position[i] -= 1
-      if position[i] < 0:
-        position[i] = i
-        i += 1
-      else:
-        break
-    if i >= n:
-      break
+proc reverse*[T](a: var openArray[T], first, last: Natural) =
+  var x = first
+  var y = last
+  while x < y:
+    swap(a[x], a[y])
+    dec(y)
+    inc(x)
+
+proc reverse*[T](a: var openArray[T]) =
+  reverse(a, 0, max(0, a.high))
+
+proc nextPermutation*[T](x: var openarray[T]): bool {.discardable.} =
+  if x.len < 2:
+    return false
+  var i = x.high
+  while i > 0 and x[i-1] >= x[i]:
+    dec i
+  if i == 0:
+    return false
+  var j = x.high
+  while j >= i and x[j] <= x[i-1]:
+    dec j
+  swap x[j], x[i-1]
+  x.reverse(i, x.high)
+  result = true
 
 proc getShortestDistance(points: varargs[Point], units: LengthMeasure = Metres): Distance = 
   var point_list = newSeq[Point](0)
@@ -324,11 +325,11 @@ proc getShortestDistance(points: varargs[Point], units: LengthMeasure = Metres):
     point_list.add(point)
   echo point_list
   var cumulativeDistance = getHaversineDistance(point_list, units)
-  for permutation in point_list.permutations:
-    var newDistance = getHaversineDistance(permutation, units)
+  while nextPermutation(point_list):
+    var newDistance = getHaversineDistance(point_list, units)
     if newDistance < cumulativeDistance:
       cumulativeDistance = newDistance
-      echo permutation
+      echo point_list
   cumulativeDistance
 
     
