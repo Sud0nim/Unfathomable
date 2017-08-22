@@ -319,7 +319,7 @@ proc nextPermutation*[T](x: var openarray[T]): bool {.discardable.} =
   x.reverse(i, x.high)
   result = true
 
-proc getShortestDistance(points: varargs[Point], units: LengthMeasure = Metres): Distance = 
+proc getShortestHaversine(points: varargs[Point], units: LengthMeasure = Metres): Distance = 
   var point_list = newSeq[Point](0)
   for point in points:
     point_list.add(point)
@@ -327,6 +327,19 @@ proc getShortestDistance(points: varargs[Point], units: LengthMeasure = Metres):
   var cumulativeDistance = getHaversineDistance(point_list, units)
   while nextPermutation(point_list):
     var newDistance = getHaversineDistance(point_list, units)
+    if newDistance < cumulativeDistance:
+      cumulativeDistance = newDistance
+      echo point_list
+  cumulativeDistance
+
+proc getShortestVincenty(points: varargs[Point], units: LengthMeasure = Metres): Distance = 
+  var point_list = newSeq[Point](0)
+  for point in points:
+    point_list.add(point)
+  echo point_list
+  var cumulativeDistance = getVincentyDistance(point_list, units)
+  while nextPermutation(point_list):
+    var newDistance = getVincentyDistance(point_list, units)
     if newDistance < cumulativeDistance:
       cumulativeDistance = newDistance
       echo point_list
