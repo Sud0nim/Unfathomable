@@ -270,7 +270,7 @@ proc getHaversineDistance(points: varargs[Point], units: LengthMeasure = Metres)
   ## ASSUMES A PATH BETWEEN POINTS IN ORDER POINTS GIVEN, e.g A -> B -> C
   var cumulativeDistance = Distance(size: 0.0, units: units)
   for i in 0..<points.len - 1:
-    cumulativeDistance = cumulativeDistance + getHaversineDistance(points[i], points[i + 1], units)
+    cumulativeDistance += getHaversineDistance(points[i], points[i + 1], units)
   cumulativeDistance
 
 proc getVincentyDistance(points: varargs[Point], units: LengthMeasure = Metres): Distance =
@@ -285,13 +285,6 @@ proc getBearing(pointA, pointB: Point): float =
   radToDeg(arctan2(sin(λ) * cos(pointB.latitude), 
            cos(pointA.latitude) * sin(pointB.latitude) - 
            sin(pointA.latitude) * cos(pointB.latitude) * cos(λ)))
-
-proc getHaversineDistance(points: seq[Point], units: LengthMeasure = Metres): Distance =
-  ## ASSUMES A PATH BETWEEN POINTS IN ORDER POINTS GIVEN, e.g A -> B -> C
-  var cumulativeDistance = Distance(size: 0.0, units: units)
-  for i in 0..<points.len - 1:
-    cumulativeDistance = cumulativeDistance + getHaversineDistance(points[i], points[i + 1], units)
-  cumulativeDistance
 
 proc reverse*[T](a: var openArray[T], first, last: Natural) =
   var x = first
