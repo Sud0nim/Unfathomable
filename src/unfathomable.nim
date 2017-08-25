@@ -70,7 +70,8 @@ proc newPoint*(latitude, longitude: float): Point =
     raise newException(IOError, "Point must be of valid latitude (-90 to 90) and longitude (-180 to 180).")
 
 proc sizeAs*(measurement: Distance, units: LengthMeasure): float =
-  measurement.size * length_multipliers[ord(measurement.units)] /  length_multipliers[ord(units)]
+  measurement.size * length_multipliers[ord(measurement.units)] / 
+                     length_multipliers[ord(units)]
 
 proc to*(measurement: var Distance, units: LengthMeasure) =
   measurement.size = measurement.sizeAs(units)
@@ -79,7 +80,8 @@ proc to*(measurement: var Distance, units: LengthMeasure) =
 proc copyAs*(measurement: Distance, units: LengthMeasure): Distance =
   Distance(size: measurement.sizeAs(units), units: units)
 
-proc getHaversineDistance(pointA, pointB: Point, units: LengthMeasure = Metres): Distance =
+proc getHaversineDistance(pointA, pointB: Point, 
+                          units: LengthMeasure = Metres): Distance =
   if pointA == pointB:
     Distance(size: 0.0, units: units)
   else:
@@ -213,7 +215,8 @@ template `echo` *(a: Point) =
 template `$` *(a: Point): string =
   "Latitude: " & $a.latitude & ", Longitude: " & $a.longitude
 
-proc getVincentyDistance(pointA, pointB: Point, units: LengthMeasure = Metres): Distance = 
+proc getVincentyDistance(pointA, pointB: Point, 
+                         units: LengthMeasure = Metres): Distance = 
   ## Rewritten based on wikipedia iterative method
   ## TODO: rename variables, error handling.
   if pointA == pointB:
