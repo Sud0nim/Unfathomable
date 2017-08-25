@@ -311,6 +311,8 @@ proc getVincentyDistance(points: varargs[Point],
   cumulativeDistance
 
 proc getBearing(pointA, pointB: Point): float =
+  ## Returns the bearing from point A to point B in degrees
+  ## Requires some further error handling and functionality
   let λ = degToRad(pointB.longitude - pointA.longitude)
   radToDeg(arctan2(sin(λ) * cos(pointB.latitude), 
            cos(pointA.latitude) * sin(pointB.latitude) - 
