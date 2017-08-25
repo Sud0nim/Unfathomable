@@ -266,15 +266,45 @@ proc getVincentyDistance(pointA, pointB: Point, units: LengthMeasure = Metres): 
       return distInMetres
   return Distance(size: 0.0, units: units)
 
-proc getHaversineDistance(points: varargs[Point], units: LengthMeasure = Metres): Distance =
-  ## ASSUMES A PATH BETWEEN POINTS IN ORDER POINTS GIVEN, e.g A -> B -> C
+proc getHaversineDistance(points: varargs[Point], 
+                          units: LengthMeasure = Metres): Distance =
+  ## Attempts to find the distance between all Points given in points
+  ## using the Haversine distance calculation. Finds the distance in order that
+  ## the points are given by the user. E.G. A -> B -> C if the user provides
+  ## the points as such: getHaversineDistance(A, B, C)
+  ## 
+  ##.. code-block:: nim
+  ##
+  ##     const 
+  ##       DC = newPoint(38.9072, -77.0369)
+  ##       Philadelphia = newPoint(39.9526, -75.1652)
+  ##       NY = newPoint(40.7128, -74.0059)
+  ##     echo getHaversineDistance(DC, NY, Philadelphia, Kilometres)
+  ## 
+  ##     # Outputs: 457.2093040782787 Kilometres
+  ## 
   var cumulativeDistance = Distance(size: 0.0, units: units)
   for i in 0..<points.len - 1:
     cumulativeDistance += getHaversineDistance(points[i], points[i + 1], units)
   cumulativeDistance
 
-proc getVincentyDistance(points: varargs[Point], units: LengthMeasure = Metres): Distance =
-  ## ASSUMES A PATH BETWEEN POINTS IN ORDER POINTS GIVEN, e.g A -> B -> C
+proc getVincentyDistance(points: varargs[Point], 
+                         units: LengthMeasure = Metres): Distance =
+  ## Attempts to find the distance between all Points given in points
+  ## using the Vincenty distance calculation. Finds the distance in order that
+  ## the points are given by the user. E.G. A -> B -> C if the user provides
+  ## the points as such: getVincentyDistance(A, B, C)
+  ## 
+  ##.. code-block:: nim
+  ##
+  ##     const 
+  ##       DC = newPoint(38.9072, -77.0369)
+  ##       Philadelphia = newPoint(39.9526, -75.1652)
+  ##       NY = newPoint(40.7128, -74.0059)
+  ##     echo getVincentyDistance(DC, NY, Philadelphia, Kilometres)
+  ## 
+  ##     # Outputs: 457.650671384857 Kilometres
+  ## 
   var cumulativeDistance = Distance(size: 0.0, units: units)
   for i in 0..<points.len - 1:
     cumulativeDistance += getVincentyDistance(points[i], points[i + 1], units)
@@ -287,6 +317,8 @@ proc getBearing(pointA, pointB: Point): float =
            sin(pointA.latitude) * cos(pointB.latitude) * cos(λ)))
 
 proc reverse*[T](a: var openArray[T], first, last: Natural) =
+  ## The Nim standard library implementation unchanged from algorithm.nim
+  ## in an attempt to reduce size of this module, rather than importing
   var x = first
   var y = last
   while x < y:
@@ -295,9 +327,13 @@ proc reverse*[T](a: var openArray[T], first, last: Natural) =
     inc(x)
 
 proc reverse*[T](a: var openArray[T]) =
+  ## The Nim standard library implementation unchanged from algorithm.nim
+  ## in an attempt to reduce size of this module, rather than importing
   reverse(a, 0, max(0, a.high))
 
 proc nextPermutation*[T](x: var openarray[T]): bool {.discardable.} =
+  ## The Nim standard library implementation unchanged from algorithm.nim
+  ## in an attempt to reduce size of this module, rather than importing
   if x.len < 2:
     return false
   var i = x.high
@@ -312,7 +348,23 @@ proc nextPermutation*[T](x: var openarray[T]): bool {.discardable.} =
   x.reverse(i, x.high)
   result = true
 
-proc getShortestHaversine(points: varargs[Point], units: LengthMeasure = Metres): Distance = 
+proc getShortestHaversine(points: varargs[Point], 
+                          units: LengthMeasure = Metres): Distance =
+  ## Attempts to find the shortest distance between all Points given in points
+  ## using the Haversine distance calculation. Does not return back to the first
+  ## point in the sequence, but instead gives the shortest that touches all 
+  ## Points once.
+  ## 
+  ##.. code-block:: nim
+  ##
+  ##     const 
+  ##       DC = newPoint(38.9072, -77.0369)
+  ##       Philadelphia = newPoint(39.9526, -75.1652)
+  ##       NY = newPoint(40.7128, -74.0059)
+  ##     echo getShortestHaversine(DC, Philadelphia, NY, Kilometres)
+  ## 
+  ##     # Outputs: 327.9919788108596 Kilometres
+  ## 
   var point_list = newSeq[Point](0)
   for point in points:
     point_list.add(point)
@@ -323,7 +375,23 @@ proc getShortestHaversine(points: varargs[Point], units: LengthMeasure = Metres)
       cumulativeDistance = newDistance
   cumulativeDistance
 
-proc getShortestVincenty(points: varargs[Point], units: LengthMeasure = Metres): Distance = 
+proc getShortestVincenty(points: varargs[Point], 
+                         units: LengthMeasure = Metres): Distance = 
+  ## Attempts to find the shortest distance between all Points given in points
+  ## using the Vincenty distance calculation. Does not return back to the first
+  ## point in the sequence, but instead gives the shortest that touches all 
+  ## Points once.
+  ## 
+  ##.. code-block:: nim
+  ##
+  ##     const 
+  ##       DC = newPoint(38.9072, -77.0369)
+  ##       Philadelphia = newPoint(39.9526, -75.1652)
+  ##       NY = newPoint(40.7128, -74.0059)
+  ##     echo getShortestVincenty(DC, Philadelphia, NY, Kilometres)
+  ## 
+  ##     # Outputs: 328.3215097416523 Kilometres
+  ## 
   var point_list = newSeq[Point](0)
   for point in points:
     point_list.add(point)
