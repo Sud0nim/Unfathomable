@@ -210,6 +210,42 @@ template `/=` *(a: var Distance, b: Distance) =
   else:
     a.size = a.size / b.sizeAs(a.units)
 
+template `==` *(a: Distance, b: float): bool =
+  a.size == b
+
+template `!=` *(a: Distance, b: float): bool =
+  a.size != b
+
+template `>` *(a: Distance, b: float): bool =
+  a.size > b
+
+template `>=` *(a: Distance, b: float): bool =
+  a.size >= b
+
+template `<=` *(a: Distance, b: float): bool =
+  a.size <= b
+
+template `<` *(a: Distance, b: float): bool =
+  a.size < b
+
+template `==` *(a: float, b: Distance): bool =
+  a == b.size
+
+template `!=` *(a: float, b: Distance): bool =
+  a != b.size
+
+template `>` *(a: float, b: Distance): bool =
+  a > b.size
+
+template `>=` *(a: float, b: Distance): bool =
+  a >= b.size
+
+template `<=` *(a: float, b: Distance): bool =
+  a <= b.size
+
+template `<` *(a: float, b: Distance): bool =
+  a < b.size
+
 template `echo` *(a: Distance) =
   echo($a.size & " " & $a.units)
 
