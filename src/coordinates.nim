@@ -14,15 +14,17 @@ template between*(a, b, c: untyped): bool =
     false
 
 proc newPoint*(latitude, longitude: float): Point =
+  ## Constructor for Point objects that enforces the
+  ## correct range for latitude and longitude
   if latitude.between(-90.0, 90.0) and longitude.between(-180.0, 180.0):
     return (latitude: latitude, longitude: longitude)
   else:
     raise newException(IOError, "Invalid latitude or longitude.")
   
-template `echo`*(a: Point) =
+template `echo` *(a: Point) =
   echo("Latitude: " & $a.latitude & ", Longitude: " & $a.longitude)
 
-template `$`*(a: Point): string =
+template `$` *(a: Point): string =
   "Latitude: " & $a.latitude & ", Longitude: " & $a.longitude
 
 proc getBearing*(pointA, pointB: Point): float =
