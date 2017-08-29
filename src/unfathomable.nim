@@ -98,7 +98,7 @@ proc copyAs*(measurement: Distance, units: LengthMeasure): Distance =
   Distance(size: measurement.sizeAs(units), units: units)
 
 proc getHaversineDistance*(pointA, pointB: Point, 
-                          units: LengthMeasure = Metres): Distance =
+                           units: LengthMeasure = Metres): Distance =
   if pointA == pointB:
     Distance(size: 0.0, units: units)
   else:
@@ -263,7 +263,7 @@ template `$` *(a: Distance): string =
   $a.size & " " & $a.units
 
 proc getVincentyDistance*(pointA, pointB: Point, 
-                         units: LengthMeasure = Metres): Distance = 
+                          units: LengthMeasure = Metres): Distance = 
   ## Rewritten based on wikipedia iterative method
   ## TODO: rename variables, error handling.
   if pointA == pointB:
@@ -317,7 +317,7 @@ proc getVincentyDistance*(pointA, pointB: Point,
   return Distance(size: 0.0, units: units)
 
 proc getHaversineDistance*(points: varargs[Point], 
-                          units: LengthMeasure = Metres): Distance =
+                           units: LengthMeasure = Metres): Distance =
   ## Attempts to find the distance between all Points given in points
   ## using the Haversine distance calculation. Finds the distance in order that
   ## the points are given by the user. E.G. A -> B -> C if the user provides
@@ -339,7 +339,7 @@ proc getHaversineDistance*(points: varargs[Point],
   cumulativeDistance
 
 proc getVincentyDistance*(points: varargs[Point], 
-                         units: LengthMeasure = Metres): Distance =
+                          units: LengthMeasure = Metres): Distance =
   ## Attempts to find the distance between all Points given in points
   ## using the Vincenty distance calculation. Finds the distance in order that
   ## the points are given by the user. E.G. A -> B -> C if the user provides
@@ -393,7 +393,7 @@ proc nextPermutation*[T](x: var openarray[T]): bool {.discardable.} =
   result = true
 
 proc getShortestHaversine*(points: varargs[Point], 
-                          units: LengthMeasure = Metres): Distance =
+                           units: LengthMeasure = Metres): Distance =
   ## Attempts to find the shortest distance between all Points given in points
   ## using the Haversine distance calculation. Does not return back to the first
   ## point in the sequence, but instead gives the shortest that touches all 
@@ -420,7 +420,7 @@ proc getShortestHaversine*(points: varargs[Point],
   cumulativeDistance
 
 proc getShortestVincenty*(points: varargs[Point], 
-                         units: LengthMeasure = Metres): Distance = 
+                          units: LengthMeasure = Metres): Distance = 
   ## Attempts to find the shortest distance between all Points given in points
   ## using the Vincenty distance calculation. Does not return back to the first
   ## point in the sequence, but instead gives the shortest that touches all 
