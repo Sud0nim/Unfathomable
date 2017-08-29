@@ -59,13 +59,38 @@ const length_multipliers* = [
 ]
 
 proc newDistance*(size: float, unit_type: LengthMeasure): Distance =
+  ## Constructor method for Distance objects
   Distance(size: size, units: unit_type)
 
 proc sizeAs*(measurement: Distance, units: LengthMeasure): float =
+  ## Returns the floating point representation of a Distance
+  ## in the unit-type chosen by the user. Uses array lookup
+  ## for performance reasons rather than hash table
+  ## 
+  ##.. code-block:: nim
+  ##
+  ##     const 
+  ##       roadtripToNY = newDistance(4000, Kilometres)
+  ##     echo roadtripToNY.sizeAs(Metres)
+  ## 
+  ##     # Outputs: 4000000.0
+  ## 
   measurement.size * length_multipliers[ord(measurement.units)] / 
                      length_multipliers[ord(units)]
 
 proc to*(measurement: var Distance, units: LengthMeasure) =
+  ## Mutates a Distance object in to the unit-type
+  ## given by the user.
+  ## 
+  ##.. code-block:: nim
+  ##
+  ##     const 
+  ##       roadtripToNY = newDistance(4000, Kilometres)
+  ##     roadtripToNY.to(Metres)
+  ##     echo roadtripToNY
+  ## 
+  ##     # Outputs: 4000000.0 Metres
+  ## 
   measurement.size = measurement.sizeAs(units)
   measurement.units = units
 
