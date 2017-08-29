@@ -3,7 +3,7 @@ import math
 
 type
   LengthMeasure* = enum
-    PlanckLength, Yoctometres, Zeptometres, Attometres, Femtometres, Picometres, 
+    PlanckLengths, Yoctometres, Zeptometres, Attometres, Femtometres, Picometres, 
     Angstroms, Nanometres, Micrometres, Thou, Millimetres, Centimetres, Inches, 
     Decimetres, Feet, Yards, Metres, Fathoms, HorseLengths, Rods, Decametres, 
     Chains, Hectometres, Furlongs, Kilometres, Miles, NauticalMiles, Leagues, 
@@ -16,47 +16,47 @@ type
   Point* = tuple[latitude, longitude: float]
 
 const length_multipliers* = [
-  1.62e-35,
-  1e-24,
-  1e-21,
-  1e-18,
-  1e-15,
-  1e-12,
-  1e-10,
-  1e-9,
-  1e-6,
-  2.54e-5,
-  1e-3,
-  1e-2,
-  0.0254,
-  1e-1,
-  0.3048,
-  0.9144,
-  1.0,
-  1.8288,
-  2.4,
-  5.0292,
-  1e1,
-  20.1168,
-  1e2,
-  201.1680,
-  1e3,
-  1_609.344,
-  1852.0,
-  5556.0,
-  1e6,
-  6.371009e6,
-  3.84402e8,
-  1e9,
-  1.495978707e11,
-  1e12,
-  1e15,
-  9.4607304725808e15,
-  3.08567758146719e16,
-  1e18,
-  1.40398329956757145e20,
-  1e21,
-  1e24
+  1.62e-35,                  # PlanckLengths per Metre
+  1e-24,                     # Yoctometres per Metre
+  1e-21,                     # Zeptometres per Metre
+  1e-18,                     # Attometres per Metre
+  1e-15,                     # Femtometres per Metre
+  1e-12,                     # Picometres per Metre
+  1e-10,                     # Angstroms per Metre
+  1e-9,                      # Nanometres per Metre
+  1e-6,                      # Micrometres per Metre
+  2.54e-5,                   # Thou per Metre
+  1e-3,                      # Millimetres per Metre
+  1e-2,                      # Centimetres per Metre
+  0.0254,                    # Inches per Metre
+  1e-1,                      # Decimetres per Metre
+  0.3048,                    # Feet per Metre
+  0.9144,                    # Yards per Metre
+  1.0,                       # Metres per Metre
+  1.8288,                    # Fathoms per Metre
+  2.4,                       # HorseLengths per Metre
+  5.0292,                    # Rods per Metre
+  1e1,                       # Decametres per Metre
+  20.1168,                   # Chains per Metre
+  1e2,                       # Hectometres per Metre
+  201.1680,                  # Furlongs per Metre
+  1e3,                       # Kilometres per Metre
+  1_609.344,                 # Miles per Metre
+  1852.0,                    # NauticalMiles per Metre
+  5556.0,                    # Leagues per Metre
+  1e6,                       # Megametres per Metre
+  6.371009e6,                # EarthRadii per Metre
+  3.84402e8,                 # LunarDistances per Metre
+  1e9,                       # Gigametres per Metre
+  1.495978707e11,            # AstronomicalUnits per Metre
+  1e12,                      # Terametres per Metre
+  1e15,                      # Petametres per Metre
+  9.4607304725808e15,        # LightYears per Metre
+  3.08567758146719e16,       # Parsecs per Metre
+  1e18,                      # Exametres per Metre
+  1.40398329956757145e20,    # HubbleLengths per Metre
+  1e21,                      # Zettametres per Metre
+  1e24                       # Yottametres per Metre
 ]
 
 template between(a, b, c: untyped): bool =
