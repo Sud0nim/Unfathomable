@@ -72,7 +72,7 @@ proc to*(measurement: var Distance, units: LengthMeasure) =
 proc copyAs*(measurement: Distance, units: LengthMeasure): Distance =
   Distance(size: measurement.sizeAs(units), units: units)
 
-proc getHaversineDistance(pointA, pointB: Point, 
+proc getHaversineDistance*(pointA, pointB: Point, 
                           units: LengthMeasure = Metres): Distance =
   if pointA == pointB:
     Distance(size: 0.0, units: units)
@@ -237,7 +237,7 @@ template `echo` *(a: Distance) =
 template `$` *(a: Distance): string =
   $a.size & " " & $a.units
 
-proc getVincentyDistance(pointA, pointB: Point, 
+proc getVincentyDistance*(pointA, pointB: Point, 
                          units: LengthMeasure = Metres): Distance = 
   ## Rewritten based on wikipedia iterative method
   ## TODO: rename variables, error handling.
@@ -291,7 +291,7 @@ proc getVincentyDistance(pointA, pointB: Point,
       return distInMetres
   return Distance(size: 0.0, units: units)
 
-proc getHaversineDistance(points: varargs[Point], 
+proc getHaversineDistance*(points: varargs[Point], 
                           units: LengthMeasure = Metres): Distance =
   ## Attempts to find the distance between all Points given in points
   ## using the Haversine distance calculation. Finds the distance in order that
@@ -313,7 +313,7 @@ proc getHaversineDistance(points: varargs[Point],
     cumulativeDistance += getHaversineDistance(points[i], points[i + 1], units)
   cumulativeDistance
 
-proc getVincentyDistance(points: varargs[Point], 
+proc getVincentyDistance*(points: varargs[Point], 
                          units: LengthMeasure = Metres): Distance =
   ## Attempts to find the distance between all Points given in points
   ## using the Vincenty distance calculation. Finds the distance in order that
@@ -334,14 +334,6 @@ proc getVincentyDistance(points: varargs[Point],
   for i in 0..<points.len - 1:
     cumulativeDistance += getVincentyDistance(points[i], points[i + 1], units)
   cumulativeDistance
-
-proc getBearing(pointA, pointB: Point): float =
-  ## Returns the bearing from point A to point B in degrees
-  ## Requires some further error handling and functionality
-  let λ = degToRad(pointB.longitude - pointA.longitude)
-  radToDeg(arctan2(sin(λ) * cos(pointB.latitude), 
-           cos(pointA.latitude) * sin(pointB.latitude) - 
-           sin(pointA.latitude) * cos(pointB.latitude) * cos(λ)))
 
 proc reverse*[T](a: var openArray[T], first, last: Natural) =
   ## The Nim standard library implementation unchanged from algorithm.nim
@@ -375,7 +367,7 @@ proc nextPermutation*[T](x: var openarray[T]): bool {.discardable.} =
   x.reverse(i, x.high)
   result = true
 
-proc getShortestHaversine(points: varargs[Point], 
+proc getShortestHaversine*(points: varargs[Point], 
                           units: LengthMeasure = Metres): Distance =
   ## Attempts to find the shortest distance between all Points given in points
   ## using the Haversine distance calculation. Does not return back to the first
@@ -402,7 +394,7 @@ proc getShortestHaversine(points: varargs[Point],
       cumulativeDistance = newDistance
   cumulativeDistance
 
-proc getShortestVincenty(points: varargs[Point], 
+proc getShortestVincenty*(points: varargs[Point], 
                          units: LengthMeasure = Metres): Distance = 
   ## Attempts to find the shortest distance between all Points given in points
   ## using the Vincenty distance calculation. Does not return back to the first
