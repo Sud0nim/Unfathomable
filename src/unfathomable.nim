@@ -1,5 +1,5 @@
 
-import math
+import math, coordinates
 
 type
   LengthMeasure* = enum
@@ -13,7 +13,6 @@ type
   Distance* = object
     size*: float
     units*: LengthMeasure
-  Point* = tuple[latitude, longitude: float]
 
 const length_multipliers* = [
   1.62e-35,                  # PlanckLengths per Metre
@@ -59,22 +58,8 @@ const length_multipliers* = [
   1e24                       # Yottametres per Metre
 ]
 
-template between(a, b, c: untyped): bool =
-  ## An inclusive between to ensure `a` is 
-  ## within the specified range.
-  if a >= b and a <= c:
-    true
-  else:
-    false
-
 proc newDistance*(size: float, unit_type: LengthMeasure): Distance =
   Distance(size: size, units: unit_type)
-
-proc newPoint*(latitude, longitude: float): Point =
-  if latitude.between(-90.0, 90.0) and longitude.between(-180.0, 180.0):
-    return (latitude: latitude, longitude: longitude)
-  else:
-    raise newException(IOError, "Invalid latitude or longitude.")
 
 proc sizeAs*(measurement: Distance, units: LengthMeasure): float =
   measurement.size * length_multipliers[ord(measurement.units)] / 
@@ -251,12 +236,6 @@ template `echo` *(a: Distance) =
 
 template `$` *(a: Distance): string =
   $a.size & " " & $a.units
-  
-template `echo` *(a: Point) =
-  echo("Latitude: " & $a.latitude & ", Longitude: " & $a.longitude)
-
-template `$` *(a: Point): string =
-  "Latitude: " & $a.latitude & ", Longitude: " & $a.longitude
 
 proc getVincentyDistance(pointA, pointB: Point, 
                          units: LengthMeasure = Metres): Distance = 
@@ -450,93 +429,4 @@ proc getShortestVincenty(points: varargs[Point],
       cumulativeDistance = newDistance
   cumulativeDistance
 
-    
-#[
-WIP: Parsing string coordinates
-
-proc parseCoordinates(a: string): float =
-  var 
-    b = a.split
-    latitude = 0.0
-    longitude = 0.0
-  if b.len == 8:
-    try:
-      var
-        latDegrees = parseFloat(b[0].replace("°", ""))
-        latMinutes = parseFloat(b[1].replace("′", ""))
-        latSeconds = parseFloat(b[2].replace("″", ""))
-        latBearing = b[3] #make proc to parseDirection and return an enum of North, South, East West
-        latitude = latDegrees + latMinutes / 60 + latSeconds / 3600
-      if latBearing in ["s", "S"]: #improve this with parseDirection proc
-        latitude *= -1.0
-    except IOError:
-        ## handle errors for latitude
-    try:
-      var
-        longDegrees = parseFloat(b[4].replace("°", ""))
-        longMinutes = parseFloat(b[5].replace("′", ""))
-        longSeconds = parseFloat(b[6].replace("″", ""))
-        longBearing = b[7]
-        longitude = longDegrees + longMinutes / 60 + longSeconds / 3600
-      if longBearing in ["w", "W"]: #improve this with parseDirection
-        longitude *= -1.0
-    except IOError:
-        ## handle errors for longitude
-  elif b.len == 6:
-    try:
-      var
-        latDegrees = parseFloat(b[0].replace("°", ""))
-        latMinutes = parseFloat(b[1].replace("′", ""))
-        latBearing = b[2]
-        latitude = latDegrees + latMinutes / 60
-      if latBearing in ["s", "S"]: #improve this with parseDirection
-        latitude *= -1.0
-    except IOError:
-        ## handle errors for latitude
-    try:
-      var
-        longDegrees = parseFloat(b[3].replace("°", ""))
-        longMinutes = parseFloat(b[4].replace("′", ""))
-        longBearing = b[5]
-        longitude = longDegrees + longMinutes / 60
-      if longBearing in ["w", "W"]: #improve this with parseDirection
-        longitude *= -1.0
-    except IOError:
-        ## handle errors for longitude
-  elif b.len == 4:
-    try:
-      var
-        latDegrees = parseFloat(b[0].replace("°", ""))
-        latBearing = b[2]
-        latitude = latDegrees
-      if latBearing in ["s", "S"]: #improve this with parseDirection
-        latitude *= -1.0
-    except IOError:
-        ## handle errors for latitude
-    try:
-      var
-        longDegrees = parseFloat(b[3].replace("°", ""))
-        longBearing = b[5]
-        longitude = longDegrees
-      if longBearing in ["w", "W"]: #improve this with parseDirection
-        longitude *= -1.0
-    except IOError:
-        ## handle errors for longitude
-  elif b.len == 2:
-    try:
-      latitude = parseFloat(b[0])
-      longitude = parseFloat(b[1])
-    except IOError:
-        ## handle errors for not being floats either
-  else:
-    raise newException(IOError, "Invalid latitude or longitude.")
-
-    #parsefloat
-
-proc newPoint*(latitude, longitude: string): Point =
-  var 
-    lat = parseCoordinates(latitude)
-    long = parseCoordinates(longitude)
-  newPoint(lat, long)
-]#
 
