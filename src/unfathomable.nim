@@ -60,7 +60,8 @@ const length_multipliers* = [
 
 proc newDistance*(size: float, unit_type: LengthMeasure): Distance =
   ## Constructor method for Distance objects
-  Distance(size: size, units: unit_type)
+  result.size = size
+  result.units = unit_type
 
 proc sizeAs*(measurement: Distance, units: LengthMeasure): float =
   ## Returns the floating point representation of a Distance
@@ -75,7 +76,7 @@ proc sizeAs*(measurement: Distance, units: LengthMeasure): float =
   ## 
   ##     # Outputs: 4000000.0
   ## 
-  measurement.size * length_multipliers[ord(measurement.units)] / 
+  result = measurement.size * length_multipliers[ord(measurement.units)] / 
                      length_multipliers[ord(units)]
 
 proc to*(measurement: var Distance, units: LengthMeasure) =
@@ -95,12 +96,14 @@ proc to*(measurement: var Distance, units: LengthMeasure) =
   measurement.units = units
 
 proc copyAs*(measurement: Distance, units: LengthMeasure): Distance =
-  Distance(size: measurement.sizeAs(units), units: units)
+  result.size = measurement.sizeAs(units)
+  result.units = units
 
 proc getHaversineDistance*(pointA, pointB: Point, 
                            units: LengthMeasure = Metres): Distance =
   if pointA == pointB:
-    Distance(size: 0.0, units: units)
+    result.size = 0.0
+    result.units = units
   else:
     let 
       a = sin((pointB.latitude - pointA.latitude).degToRad / 2) * 
@@ -109,8 +112,9 @@ proc getHaversineDistance*(pointA, pointB: Point,
           sin((pointB.longitude - pointA.longitude).degToRad / 2) *
           sin((pointB.longitude - pointA.longitude).degToRad / 2)
       distance = 6.371009e6 * 2 * arctan2(sqrt(a), sqrt(1 - a))
-    Distance(size: distance * length_multipliers[ord(Metres)] / 
-      length_multipliers[ord(units)], units: units)
+    result.size = distance * length_multipliers[ord(Metres)] / 
+                  length_multipliers[ord(units)]
+    result.units = units
 
 template `==` *(a, b: Distance): bool =
   if a.units == b.units:
@@ -260,14 +264,15 @@ template `echo` *(a: Distance) =
   echo($a.size & " " & $a.units)
 
 template `$` *(a: Distance): string =
-  $a.size & " " & $a.units
+  result = $a.size & " " & $a.units
 
 proc getVincentyDistance*(pointA, pointB: Point, 
                           units: LengthMeasure = Metres): Distance = 
   ## Rewritten based on wikipedia iterative method
   ## TODO: rename variables, error handling.
   if pointA == pointB:
-    return Distance(size: 0.0, units: units)
+    result.size = 0.0
+    result.units = units
   let
     major = 6378137.0
     minor = 6356752.314245
@@ -310,11 +315,13 @@ proc getVincentyDistance*(pointA, pointB: Point,
                      (B / 6) * cos2σM * (-3 + 4 * pow(sinσ, 2)) * 
                      (-3 + 4 * pow(cos2σM, 2))))
         ellipsoidalDistance = minor * A * (σ - deltaSigma)
-        distInMetres = Distance(size: abs(ellipsoidalDistance), units: Metres)
+      result.size = abs(ellipsoidalDistance)
+      result.units = Metres
       if units != Metres:
-        distInMetres.to(units)
-      return distInMetres
-  return Distance(size: 0.0, units: units)
+        result.to(units)
+      return result
+  result.size = 0.0
+  result.units = units
 
 proc getHaversineDistance*(points: varargs[Point], 
                            units: LengthMeasure = Metres): Distance =
