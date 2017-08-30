@@ -17,7 +17,8 @@ proc newPoint*(latitude, longitude: float): Point =
   ## Constructor for Point objects that enforces the
   ## correct range for latitude and longitude
   if latitude.between(-90.0, 90.0) and longitude.between(-180.0, 180.0):
-    return (latitude: latitude, longitude: longitude)
+    result.latitude = latitude
+    result.longitude = longitude
   else:
     raise newException(IOError, "Invalid latitude or longitude.")
   
@@ -25,13 +26,13 @@ template `echo` *(a: Point) =
   echo("Latitude: " & $a.latitude & ", Longitude: " & $a.longitude)
 
 template `$` *(a: Point): string =
-  "Latitude: " & $a.latitude & ", Longitude: " & $a.longitude
+  result = "Latitude: " & $a.latitude & ", Longitude: " & $a.longitude
 
 proc getBearing*(pointA, pointB: Point): float =
   ## Returns the bearing from point A to point B in degrees
   ## Requires some further error handling and functionality
   let λ = degToRad(pointB.longitude - pointA.longitude)
-  radToDeg(arctan2(sin(λ) * cos(pointB.latitude), 
+  result = radToDeg(arctan2(sin(λ) * cos(pointB.latitude), 
            cos(pointA.latitude) * sin(pointB.latitude) - 
            sin(pointA.latitude) * cos(pointB.latitude) * cos(λ)))
  
