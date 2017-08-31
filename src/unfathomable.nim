@@ -264,7 +264,7 @@ template `echo` *(a: Distance) =
   echo($a.size & " " & $a.units)
 
 template `$` *(a: Distance): string =
-  result = $a.size & " " & $a.units
+  $a.size & " " & $a.units
 
 proc getVincentyDistance*(pointA, pointB: Point, 
                           units: LengthMeasure = Metres): Distance = 
