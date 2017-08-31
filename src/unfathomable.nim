@@ -81,7 +81,7 @@ proc sizeAs*(measurement: Distance, units: LengthMeasure): float =
 
 proc to*(measurement: var Distance, units: LengthMeasure) =
   ## Mutates a Distance object in to the unit-type
-  ## given by the user.
+  ## given by the user, converting the `size` proportionally.
   ## 
   ##.. code-block:: nim
   ##
@@ -96,11 +96,26 @@ proc to*(measurement: var Distance, units: LengthMeasure) =
   measurement.units = units
 
 proc copyAs*(measurement: Distance, units: LengthMeasure): Distance =
+  ## Creates a duplicate Distance object in the unit-type given by
+  ## the user, converting the `size` proportionally.
   result.size = measurement.sizeAs(units)
   result.units = units
 
 proc getHaversineDistance*(pointA, pointB: Point, 
                            units: LengthMeasure = Metres): Distance =
+  ## Attempts to find the distance between pointA and pointB
+  ## using a Haversine distance calculation. Outputs the 
+  ## distance in the unit-type chosen by the user.
+  ## 
+  ##.. code-block:: nim
+  ##
+  ##     const 
+  ##       Philadelphia = newPoint(39.9526, -75.1652)
+  ##       NY = newPoint(40.7128, -74.0059)
+  ##     echo getHaversineDistance(NY, Philadelphia, Miles)
+  ## 
+  ##     # Outputs: 80.54174876842661 Miles
+  ## 
   if pointA == pointB:
     result.size = 0.0
     result.units = units
@@ -268,8 +283,21 @@ template `$` *(a: Distance): string =
 
 proc getVincentyDistance*(pointA, pointB: Point, 
                           units: LengthMeasure = Metres): Distance = 
-  ## Rewritten based on wikipedia iterative method
-  ## TODO: rename variables, error handling.
+  ## Attempts to find the distance between pointA and pointB
+  ## using the iterative Vincenty distance calculation outlined in the Vincenty
+  ## Wikipedia entry: https://en.wikipedia.org/wiki/Vincenty%27s_formulae
+  ## Outputs the distance in the unit-type chosen by the user.
+  ## TODO: Add error handling.
+  ## 
+  ##.. code-block:: nim
+  ##
+  ##     const 
+  ##       Philadelphia = newPoint(39.9526, -75.1652)
+  ##       NY = newPoint(40.7128, -74.0059)
+  ##     echo getVincentyDistance(NY, Philadelphia, Miles)
+  ## 
+  ##     # Outputs: 80.61134264315091 Miles
+  ## 
   if pointA == pointB:
     result.size = 0.0
     result.units = units
