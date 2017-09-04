@@ -301,6 +301,7 @@ proc getVincentyDistance*(pointA, pointB: Point,
   if pointA == pointB:
     result.size = 0.0
     result.units = units
+    return result
   let
     major = 6378137.0
     minor = 6356752.314245
@@ -350,6 +351,7 @@ proc getVincentyDistance*(pointA, pointB: Point,
       return result
   result.size = 0.0
   result.units = units
+  return result
 
 proc getHaversineDistance*(points: varargs[Point], 
                            units: LengthMeasure = Metres): Distance =
