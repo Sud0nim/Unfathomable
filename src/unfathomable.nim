@@ -369,7 +369,6 @@ proc getHaversineDistance*(points: varargs[Point],
   ## 
   ##     # Outputs: 457.2093040782787 Kilometres
   ## 
-  var result = Distance(size: 0.0, units: units)
   for i in 0..<points.len - 1:
     result += getHaversineDistance(points[i], points[i + 1], units)
   result
@@ -391,7 +390,6 @@ proc getVincentyDistance*(points: varargs[Point],
   ## 
   ##     # Outputs: 457.650671384857 Kilometres
   ## 
-  var result = Distance(size: 0.0, units: units)
   for i in 0..<points.len - 1:
     result += getVincentyDistance(points[i], points[i + 1], units)
   result
