@@ -119,6 +119,7 @@ proc getHaversineDistance*(pointA, pointB: Point,
   if pointA == pointB:
     result.size = 0.0
     result.units = units
+    return result
   else:
     let 
       a = sin((pointB.latitude - pointA.latitude).degToRad / 2) * 
@@ -370,10 +371,9 @@ proc getHaversineDistance*(points: varargs[Point],
   ## 
   ##     # Outputs: 457.2093040782787 Kilometres
   ## 
-  var cumulativeDistance = Distance(size: 0.0, units: units)
+  var result = Distance(size: 0.0, units: units)
   for i in 0..<points.len - 1:
-    cumulativeDistance += getHaversineDistance(points[i], points[i + 1], units)
-  cumulativeDistance
+    result += getHaversineDistance(points[i], points[i + 1], units)
 
 proc getVincentyDistance*(points: varargs[Point], 
                           units: LengthMeasure = Metres): Distance =
@@ -392,10 +392,9 @@ proc getVincentyDistance*(points: varargs[Point],
   ## 
   ##     # Outputs: 457.650671384857 Kilometres
   ## 
-  var cumulativeDistance = Distance(size: 0.0, units: units)
+  var result = Distance(size: 0.0, units: units)
   for i in 0..<points.len - 1:
-    cumulativeDistance += getVincentyDistance(points[i], points[i + 1], units)
-  cumulativeDistance
+    result += getVincentyDistance(points[i], points[i + 1], units)
 
 proc reverse*[T](a: var openArray[T], first, last: Natural) =
   ## The Nim standard library implementation unchanged from algorithm.nim
@@ -449,12 +448,11 @@ proc getShortestHaversine*(points: varargs[Point],
   var point_list = newSeq[Point](0)
   for point in points:
     point_list.add(point)
-  var cumulativeDistance = getHaversineDistance(point_list, units)
+  var result = getHaversineDistance(point_list, units)
   while nextPermutation(point_list):
     var newDistance = getHaversineDistance(point_list, units)
-    if newDistance < cumulativeDistance:
-      cumulativeDistance = newDistance
-  cumulativeDistance
+    if newDistance < result:
+      result = newDistance
 
 proc getShortestVincenty*(points: varargs[Point], 
                           units: LengthMeasure = Metres): Distance = 
@@ -476,11 +474,10 @@ proc getShortestVincenty*(points: varargs[Point],
   var point_list = newSeq[Point](0)
   for point in points:
     point_list.add(point)
-  var cumulativeDistance = getVincentyDistance(point_list, units)
+  var result = getVincentyDistance(point_list, units)
   while nextPermutation(point_list):
     var newDistance = getVincentyDistance(point_list, units)
-    if newDistance < cumulativeDistance:
-      cumulativeDistance = newDistance
-  cumulativeDistance
+    if newDistance < result:
+      result = newDistance
 
 
