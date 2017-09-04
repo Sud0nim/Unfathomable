@@ -374,6 +374,7 @@ proc getHaversineDistance*(points: varargs[Point],
   var result = Distance(size: 0.0, units: units)
   for i in 0..<points.len - 1:
     result += getHaversineDistance(points[i], points[i + 1], units)
+  result
 
 proc getVincentyDistance*(points: varargs[Point], 
                           units: LengthMeasure = Metres): Distance =
@@ -395,6 +396,7 @@ proc getVincentyDistance*(points: varargs[Point],
   var result = Distance(size: 0.0, units: units)
   for i in 0..<points.len - 1:
     result += getVincentyDistance(points[i], points[i + 1], units)
+  result
 
 proc reverse*[T](a: var openArray[T], first, last: Natural) =
   ## The Nim standard library implementation unchanged from algorithm.nim
@@ -453,6 +455,7 @@ proc getShortestHaversine*(points: varargs[Point],
     var newDistance = getHaversineDistance(point_list, units)
     if newDistance < result:
       result = newDistance
+  result
 
 proc getShortestVincenty*(points: varargs[Point], 
                           units: LengthMeasure = Metres): Distance = 
@@ -479,5 +482,6 @@ proc getShortestVincenty*(points: varargs[Point],
     var newDistance = getVincentyDistance(point_list, units)
     if newDistance < result:
       result = newDistance
+  result
 
 
