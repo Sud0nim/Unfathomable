@@ -96,29 +96,8 @@ Output:
     1.0 Kilometres
     0.1 Kilometres
     1.0 Kilometres
-
-Find Haversine distance between points:
-
-    var 
-      p1 = newPoint(40.7486, -73.9864)
-      p2 = newPoint(26.22, -50.0)
-      p3 = newPoint(-26.22, 50.0)
     
-    echo p1 - p2
-    echo getHaversineDistance(p1, p2, Kilometres)
-    echo getHaversineDistance(p2, p3, Kilometres)
-    echo getHaversineDistance(p1, p2, p3, Kilometres)
-    echo getHaversineDistance(p1, p2, p3, p1, Kilometres)
-    
-Output:
-    
-    2733944.610522819 Metres
-    2733.944610522819 Kilometres
-    12183.62598175088 Kilometres
-    14917.5705922737 Kilometres
-    29588.23424886339 Kilometres
-    
-Find Vincenty distance between points:
+Find the distance between any points:
 
     var 
       p1 = newPoint(40.7486, -73.9864)
@@ -129,6 +108,9 @@ Find Vincenty distance between points:
     echo getVincentyDistance(p2, p3, Kilometres)
     echo getVincentyDistance(p1, p2, p3, Kilometres)
     echo getVincentyDistance(p1, p2, p3, p1, Kilometres)
+    echo p1 - p2
+    echo getHaversineDistance(p1, p2, Kilometres)
+    echo getHaversineDistance(p1, p2, p3, p1, Kilometres)
     
 Output:
 
@@ -136,4 +118,22 @@ Output:
     12147.168393401 Kilometres
     14878.216487387 Kilometres
     29599.195015569 Kilometres
+    2733944.610522819 Metres
+    2733.944610522819 Kilometres
+    29588.23424886339 Kilometres
+    
+Find the shortest distance between a number of points:
+
+    const 
+      DC = newPoint(38.9072, -77.0369)
+      Philadelphia = newPoint(39.9526, -75.1652)
+      NY = newPoint(40.7128, -74.0059)
+    echo getVincentyDistance(DC, NY, Philadelphia, Kilometres)
+    echo getHaversineDistance(DC, NY, Philadelphia, Kilometres)
+
+Output: 
+
+    457.650671384857 Kilometres
+    457.2093040782787 Kilometres
+    
     
