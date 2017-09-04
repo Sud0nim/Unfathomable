@@ -119,7 +119,6 @@ proc getHaversineDistance*(pointA, pointB: Point,
   if pointA == pointB:
     result.size = 0.0
     result.units = units
-    return result
   else:
     let 
       a = sin((pointB.latitude - pointA.latitude).degToRad / 2) * 
@@ -352,7 +351,6 @@ proc getVincentyDistance*(pointA, pointB: Point,
       return result
   result.size = 0.0
   result.units = units
-  return result
 
 proc getHaversineDistance*(points: varargs[Point], 
                            units: LengthMeasure = Metres): Distance =
